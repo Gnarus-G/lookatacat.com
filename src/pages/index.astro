@@ -1,0 +1,23 @@
+---
+import FileUpload from "../components/FileUpload";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Welcome to Astro">
+  <main>
+    <FileUpload client:load>
+      <h4>Drap or Select images and videos here to uplaod</h4>
+      <p>Attach as many files as you like, each file should not exceed 8mb</p>
+    </FileUpload>
+  </main>
+</Layout>
+
+<style>
+  main {
+    padding: 10%;
+  }
+  h4,
+  p {
+    margin: 0;
+  }
+</style>
