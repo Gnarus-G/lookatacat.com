@@ -49,9 +49,9 @@ export default function FileUpload() {
 
   return (
     <section className="flex flex-col text-[whitesmoke]">
-      <div className="flex cursor-pointer border-2 rounded-sm border-dashed border-[#eeeeee] bg-[#4d4d4d] text-[#bdbdbd] outline-none hover:border-blue-600">
+      <div className="flex border-2 rounded-sm border-dashed border-[#eeeeee] bg-[#4d4d4d] text-[#bdbdbd] outline-none hover:border-blue-600">
         <label
-          className="flex items-center w-full h-44 justify-center text-center"
+          className="flex items-center w-full h-44 justify-center text-center cursor-pointer"
           htmlFor="upload"
         >
           Choose images or videos to upload...
