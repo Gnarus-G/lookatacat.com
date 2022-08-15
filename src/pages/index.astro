@@ -5,10 +5,7 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Upload a cat pic!">
   <main>
-    <FileUpload client:load>
-      <h4>Drap or Select images and videos here to uplaod</h4>
-      <p>Attach as many files as you like, each file should not exceed 8mb</p>
-    </FileUpload>
+    <FileUpload client:load />
   </main>
 </Layout>
 
@@ -18,9 +15,6 @@ import Layout from "../layouts/Layout.astro";
     background-color: #2e2e2e;
     box-sizing: border-box;
     height: 100%;
-  }
-  h4,
-  p {
-    margin: 0;
+    overflow-y: auto;
   }
 </style>
