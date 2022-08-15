@@ -24,7 +24,11 @@
     "wrangler": "^2.0.25"
   },
   "dependencies": {
+    "@emotion/styled": "^11.10.0",
+    "@mantine/core": "^5.1.6",
     "@mantine/dropzone": "^5.1.6",
-    "@tabler/icons": "^1.82.0"
+    "@mantine/hooks": "^5.1.6",
+    "@mui/icons-material": "^5.8.4",
+    "utils": "link:@mui/material/utils"
   }
 }

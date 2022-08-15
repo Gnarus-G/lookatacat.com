@@ -1,5 +1,5 @@
 import { Dropzone, IMAGE_MIME_TYPE, MIME_TYPES } from "@mantine/dropzone";
-import { IconUpload, IconPhoto, IconX } from "@tabler/icons";
+import { InsertPhoto } from "@mui/icons-material";
 import { ReactNode, useCallback, useState } from "react";
 
 const ACCEPTED_MIME_TYPES = [...IMAGE_MIME_TYPE, MIME_TYPES.mp4];
@@ -65,14 +65,8 @@ export default function FileUpload({
             gap: 10,
           }}
         >
-          <Dropzone.Accept>
-            <IconUpload size={50} stroke={1.5} />
-          </Dropzone.Accept>
-          <Dropzone.Reject>
-            <IconX size={50} stroke={1.5} />
-          </Dropzone.Reject>
           <Dropzone.Idle>
-            <IconPhoto size={50} stroke={1.5} />
+            <InsertPhoto style={{ width: 50, height: 50 }} />
           </Dropzone.Idle>
           <div>{children}</div>
         </div>
