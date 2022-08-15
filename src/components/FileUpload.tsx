@@ -1,17 +1,62 @@
-import { Dropzone, IMAGE_MIME_TYPE, MIME_TYPES } from "@mantine/dropzone";
-import { InsertPhoto } from "@mui/icons-material";
-import { ReactNode, useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { CSSProperties, ReactNode, useCallback, useMemo } from "react";
 
-const ACCEPTED_MIME_TYPES = [...IMAGE_MIME_TYPE, MIME_TYPES.mp4];
+const baseStyle: CSSProperties = {
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  padding: "20px",
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: "#eeeeee",
+  borderStyle: "dashed",
+  backgroundColor: "#4d4d4d",
+  color: "#bdbdbd",
+  outline: "none",
+  transition: "border .24s ease-in-out",
+};
 
-export default function FileUpload({
-  className,
-  children,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const [files, setFiles] = useState<File[]>([]);
+const focusedStyle = {
+  borderColor: "#2196f3",
+};
+
+const acceptStyle = {
+  borderColor: "#00e676",
+};
+
+const rejectStyle = {
+  borderColor: "#ff1744",
+};
+
+export default function FileUpload({ children }: { children: ReactNode }) {
+  const {
+    acceptedFiles: files,
+    getRootProps,
+    getInputProps,
+    isDragAccept,
+    isFocused,
+    isDragReject,
+  } = useDropzone({
+    multiple: true,
+    maxSize: 8 * 1024 ** 2,
+    onDropRejected: (rejection: any) =>
+      console.error("Files Rejected", rejection),
+    accept: {
+      "image/*": [],
+      "video/mp4": [],
+    },
+  });
+
+  const style = useMemo(
+    () => ({
+      ...baseStyle,
+      ...(isFocused ? focusedStyle : {}),
+      ...(isDragAccept ? acceptStyle : {}),
+      ...(isDragReject ? rejectStyle : {}),
+    }),
+    [isFocused, isDragAccept, isDragReject]
+  );
 
   const uploadFiles = useCallback(async () => {
     await Promise.all(
@@ -40,37 +85,13 @@ export default function FileUpload({
   });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <Dropzone
-        className={className}
-        onDrop={setFiles}
-        onReject={(rejection) => console.error("Files Rejected", rejection)}
-        accept={ACCEPTED_MIME_TYPES}
-        maxSize={8 * 1024 ** 2}
-        styles={{
-          root: {
-            backgroundColor: "#4d4d4d",
-            color: "whitesmoke",
-            ":hover": {
-              color: "black",
-            },
-          },
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <Dropzone.Idle>
-            <InsertPhoto style={{ width: 50, height: 50 }} />
-          </Dropzone.Idle>
-          <div>{children}</div>
-        </div>
-      </Dropzone>
+    <section
+      style={{ display: "flex", flexDirection: "column", color: "whitesmoke" }}
+    >
+      <div {...getRootProps({ style })}>
+        <input {...getInputProps()} />
+        <div>{children}</div>
+      </div>
       <button
         style={{
           padding: 10,
@@ -86,7 +107,7 @@ export default function FileUpload({
       >
         Upload
       </button>
-      <div style={{ padding: "0 10px" }}>{previews}</div>
-    </div>
+      <aside style={{ padding: "0 10px" }}>{previews}</aside>
+    </section>
   );
 }

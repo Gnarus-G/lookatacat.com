@@ -24,11 +24,6 @@
     "wrangler": "^2.0.25"
   },
   "dependencies": {
-    "@emotion/styled": "^11.10.0",
-    "@mantine/core": "^5.1.6",
-    "@mantine/dropzone": "^5.1.6",
-    "@mantine/hooks": "^5.1.6",
-    "@mui/icons-material": "^5.8.4",
-    "utils": "link:@mui/material/utils"
+   "react-dropzone": "^14.2.2"
   }
 }
