@@ -11,6 +11,9 @@
     "browser": true,
     "node": true
   },
+  "rules": {
+    "no-unused-vars": "off"
+  },
   "overrides": [
     {
       "files": ["*.astro"],

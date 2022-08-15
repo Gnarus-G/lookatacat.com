@@ -13,11 +13,19 @@ export default function FileUpload({
 }) {
   const [files, setFiles] = useState<File[]>([]);
 
-  const acceptFiles = useCallback((files: File[]) => {
-    console.log("Dropped Files", files);
-    setFiles(files)
-    // ... upload to cloudflare R2
-  }, []);
+  const uploadFiles = useCallback(async () => {
+    await Promise.all(
+      files.map((file) =>
+        fetch(import.meta.env.PUBLIC_WORKER_ENDPOINT + file.name, {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: file,
+        }).catch((e) => console.error(e))
+      )
+    );
+  }, [files]);
 
   const previews = files.map((file) => {
     const imageUrl = URL.createObjectURL(file);
@@ -32,13 +40,22 @@ export default function FileUpload({
   });
 
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <Dropzone
         className={className}
-        onDrop={acceptFiles}
+        onDrop={setFiles}
         onReject={(rejection) => console.error("Files Rejected", rejection)}
         accept={ACCEPTED_MIME_TYPES}
         maxSize={8 * 1024 ** 2}
+        styles={{
+          root: {
+            backgroundColor: "#4d4d4d",
+            color: "whitesmoke",
+            ":hover": {
+              color: "black",
+            },
+          },
+        }}
       >
         <div
           style={{
@@ -60,7 +77,22 @@ export default function FileUpload({
           <div>{children}</div>
         </div>
       </Dropzone>
-      <div style={{ padding: 10 }}>{previews}</div>
-    </>
+      <button
+        style={{
+          padding: 10,
+          margin: "10px auto",
+          border: "none",
+          backgroundColor: "#274988",
+          color: "whitesmoke",
+          borderRadius: 5,
+          cursor: "pointer",
+        }}
+        type="button"
+        onClick={uploadFiles}
+      >
+        Upload
+      </button>
+      <div style={{ padding: "0 10px" }}>{previews}</div>
+    </div>
   );
 }
