@@ -18,14 +18,26 @@ export default function FileUpload() {
   }, [files]);
 
   const previews = files.map((file) => {
-    const imageUrl = URL.createObjectURL(file);
+    const fileUrl = URL.createObjectURL(file);
+    const isVideo = file.type.includes("video");
+
     return (
       <div key={file.name} className="relative">
-        <img
-          src={imageUrl}
-          className="w-full h-full rounded-lg"
-          onLoad={() => URL.revokeObjectURL(imageUrl)}
-        />
+        {isVideo ? (
+          <video
+            src={fileUrl}
+            autoPlay
+            playsInline
+            onLoad={() => URL.revokeObjectURL(fileUrl)}
+            loop
+          />
+        ) : (
+          <img
+            src={fileUrl}
+            className="w-full h-full rounded-lg"
+            onLoad={() => URL.revokeObjectURL(fileUrl)}
+          />
+        )}
         <p className="absolute bg-opacity-80 bg-gray-700 text-white bottom-0 right-0 w-full text-center">
           {[file.name, file.type, (file.size / 1024).toFixed(2) + " KB"].join(
             "; "
