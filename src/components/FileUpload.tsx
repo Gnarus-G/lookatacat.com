@@ -29,9 +29,10 @@ export default function FileUpload() {
     const isVideo = file.type.includes("video");
 
     return (
-      <div key={file.name} className="relative">
+      <div key={file.name} className="relative self-baseline">
         {isVideo ? (
           <video
+            className="w-full h-full rounded-lg"
             src={fileUrl}
             autoPlay
             playsInline
@@ -40,8 +41,8 @@ export default function FileUpload() {
           />
         ) : (
           <img
-            src={fileUrl}
             className="w-full h-full rounded-lg object-cover"
+            src={fileUrl}
             onLoad={() => URL.revokeObjectURL(fileUrl)}
           />
         )}
