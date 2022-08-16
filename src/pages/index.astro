@@ -1,11 +1,37 @@
 ---
-import FileUpload from "../components/FileUpload";
 import Layout from "../layouts/Layout.astro";
+
+const objects: { path: string; type: string }[] = await fetch(
+  import.meta.env.PUBLIC_WORKER_ENDPOINT
+)
+  .then((res) => res.json())
+  .then((d) => d.assets);
+
+const assets = objects.map((p) => ({
+  name: p.path,
+  url: `${import.meta.env.PUBLIC_WORKER_ENDPOINT}${p.path}`,
+  isVideo: p.type.includes("video"),
+}));
 ---
 
-<Layout title="Upload a cat pic!">
-  <main>
-    <FileUpload client:load />
+<Layout title="Marceline">
+  <main class="cats">
+    {
+      assets.map(({ name, url, isVideo }) =>
+        isVideo ? (
+          <video class="rounded-lg" src={url} autoplay loop playsinline>
+            <track kind="captions" />
+          </video>
+        ) : (
+          <img
+            class="rounded-lg"
+            loading="lazy"
+            src={url}
+            alt={`Marceline named as ${name}`}
+          />
+        )
+      )
+    }
   </main>
 </Layout>
 
@@ -16,5 +42,22 @@ import Layout from "../layouts/Layout.astro";
     box-sizing: border-box;
     height: 100%;
     overflow-y: auto;
+  }
+
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2em;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 3em 1em;
+  }
+
+  img,
+  video {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    max-width: 300px;
   }
 </style>
