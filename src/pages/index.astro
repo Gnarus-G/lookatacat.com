@@ -1,15 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-const objects: { path: string; type: string }[] = await fetch(
-  import.meta.env.PUBLIC_WORKER_ENDPOINT
-)
-  .then((res) => res.json())
-  .then((d) => d.assets);
+const objects: { path: string; type: string; uploadedAt: string }[] =
+  await fetch(import.meta.env.PUBLIC_WORKER_ENDPOINT)
+    .then((res) => res.json())
+    .then((d) => d.assets);
 
 const assets = objects.map((p) => ({
   name: p.path,
   url: `${import.meta.env.PUBLIC_WORKER_ENDPOINT}${p.path}`,
+  uploadedAt: new Date(p.uploadedAt),
   isVideo: p.type.includes("video"),
 }));
 ---
@@ -17,20 +17,22 @@ const assets = objects.map((p) => ({
 <Layout title="Marceline">
   <main class="cats">
     {
-      assets.map(({ name, url, isVideo }) =>
-        isVideo ? (
-          <video class="rounded-lg" src={url} autoplay loop playsinline>
-            <track kind="captions" />
-          </video>
-        ) : (
-          <img
-            class="rounded-lg"
-            loading="lazy"
-            src={url}
-            alt={`Marceline named as ${name}`}
-          />
+      assets
+        .sort((a, b) => +b.uploadedAt - +a.uploadedAt)
+        .map(({ name, url, isVideo }) =>
+          isVideo ? (
+            <video class="rounded-lg" src={url} autoplay loop playsinline>
+              <track kind="captions" />
+            </video>
+          ) : (
+            <img
+              class="rounded-lg"
+              loading="lazy"
+              src={url}
+              alt={`Marceline named as ${name}`}
+            />
+          )
         )
-      )
     }
   </main>
 </Layout>

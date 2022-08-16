@@ -52,6 +52,7 @@ const catCrud: WorkerFunction<Promise<Response>> = async (request, env) => {
         const assets = allObjects.objects.map((o) => ({
           path: o.key,
           type: o.httpMetadata.contentType,
+          uploadedAt: o.uploaded,
         }));
 
         return new Response(
