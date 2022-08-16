@@ -1,20 +1,27 @@
 import { useCallback, useState } from "react";
 
 export default function FileUpload() {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<Record<string, string>>({});
+  const [error, setError] = useState<Record<string, string>>({});
   const [files, setFiles] = useState<File[]>([]);
 
   const uploadFiles = useCallback(async () => {
-    await Promise.all(
-      files.map((file) =>
-        fetch(import.meta.env.PUBLIC_WORKER_ENDPOINT + file.name, {
-          method: "PUT",
-          headers: {
-            "Content-Type": file.type,
-          },
-          body: file,
-        }).catch((e) => console.error(e))
-      )
+    setLoading(true);
+    const uploads = files.map((file) =>
+      fetch(import.meta.env.PUBLIC_WORKER_ENDPOINT + file.name, {
+        method: "PUT",
+        body: file,
+      })
+        .then((res) => res.text())
+        .then((msg) => setSuccess((m) => ({ ...m, [file.name]: msg })))
+        .catch((e) => {
+          console.error(e);
+          setError((e) => ({ ...e, [file.name]: e.message }));
+        })
     );
+    await Promise.all(uploads);
+    setLoading(false);
   }, [files]);
 
   const previews = files.map((file) => {
@@ -34,14 +41,24 @@ export default function FileUpload() {
         ) : (
           <img
             src={fileUrl}
-            className="w-full h-full rounded-lg"
+            className="w-full h-full rounded-lg object-cover"
             onLoad={() => URL.revokeObjectURL(fileUrl)}
           />
         )}
-        <p className="absolute bg-opacity-80 bg-gray-700 text-white bottom-0 right-0 w-full text-center">
-          {[file.name, file.type, (file.size / 1024).toFixed(2) + " KB"].join(
-            "; "
-          )}
+        <p
+          className="absolute bg-opacity-80 bg-gray-700 rounded-t-lg text-white top-0 w-full text-center truncate"
+          style={{
+            backgroundColor: success[file.name]
+              ? "green"
+              : error[file.name]
+              ? "red"
+              : undefined,
+          }}
+        >
+          {success[file.name] || error[file.name] || file.name}
+        </p>
+        <p className="absolute bg-opacity-80 bg-gray-700 rounded-b-lg text-white bottom-0 w-full text-center">
+          {[file.type, (file.size / 1024).toFixed(2) + " KB"].join("; ")}
         </p>
       </div>
     );
@@ -66,13 +83,16 @@ export default function FileUpload() {
         />
       </div>
       <button
-        className="p-3 mx-auto my-5 border-none bg-[#274988] bg-opacity-50 hover:bg-opacity-100 rounded-md cursor-pointer"
+        className="p-3 mx-auto my-5 border-none bg-[#274988] bg-opacity-50 hover:bg-opacity-100 rounded-md cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-700"
         type="button"
+        disabled={loading}
         onClick={uploadFiles}
       >
-        Upload
+        {loading ? "Uploading..." : "Upload"}
       </button>
-      <aside className="px-3">{previews}</aside>
+      <aside className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 text-xs md:text-sm lg:text-base">
+        {previews}
+      </aside>
     </section>
   );
 }
