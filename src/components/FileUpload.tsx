@@ -1,15 +1,16 @@
-import { useCallback, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 
 export default function FileUpload() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<Record<string, string>>({});
   const [error, setError] = useState<Record<string, string>>({});
+  const [prefix, setPrefix] = useState("");
   const [files, setFiles] = useState<File[]>([]);
 
   const uploadFiles = useCallback(async () => {
     setLoading(true);
     const uploads = files.map((file) =>
-      fetch(import.meta.env.PUBLIC_WORKER_ENDPOINT + file.name, {
+      fetch(`${import.meta.env.PUBLIC_WORKER_ENDPOINT}${prefix}/${file.name}`, {
         method: "PUT",
         body: file,
       })
@@ -22,7 +23,15 @@ export default function FileUpload() {
     );
     await Promise.all(uploads);
     setLoading(false);
-  }, [files]);
+  }, [files, prefix]);
+
+  const submitForm = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      uploadFiles();
+    },
+    [uploadFiles]
+  );
 
   const previews = files.map((file) => {
     const fileUrl = URL.createObjectURL(file);
@@ -66,34 +75,51 @@ export default function FileUpload() {
   });
 
   return (
-    <section className="flex flex-col text-[whitesmoke]">
-      <div className="flex border-2 rounded-sm border-dashed border-[#eeeeee] bg-[#4d4d4d] text-[#bdbdbd] outline-none hover:border-blue-600">
-        <label
-          className="flex items-center w-full h-44 justify-center text-center cursor-pointer"
-          htmlFor="upload"
-        >
-          Choose images or videos to upload...
-        </label>
-        <input
-          id="upload"
-          hidden
-          type="file"
-          multiple
-          accept="image/*, video/mp4"
-          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-        />
-      </div>
-      <button
-        className="p-3 mx-auto my-5 border-none bg-[#274988] bg-opacity-50 hover:bg-opacity-100 rounded-md cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-700"
-        type="button"
-        disabled={loading}
-        onClick={uploadFiles}
+    <section>
+      <form
+        className="flex flex-col text-[whitesmoke] gap-5 p-5"
+        onSubmit={submitForm}
       >
-        {loading ? "Uploading..." : "Upload"}
-      </button>
-      <aside className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 text-xs md:text-sm lg:text-base">
-        {previews}
-      </aside>
+        <div>
+          <label className="italic" htmlFor="prefix">
+            File prefix:
+          </label>
+          <input
+            id="prefix"
+            placeholder="to store each file as <prefix>/<filename>"
+            className="rounded-md w-full text-xs text-black p-1 border-solid border-2 focus-visible:outline-none focus:border-blue-400"
+            value={prefix}
+            required
+            onChange={(e) => setPrefix(e.target.value)}
+          />
+        </div>
+        <div className="flex border-2 rounded-sm border-dashed border-[#eeeeee] bg-[#4d4d4d] text-[#bdbdbd] outline-none hover:border-blue-600">
+          <label
+            className="flex items-center w-full h-44 justify-center text-center cursor-pointer"
+            htmlFor="upload"
+          >
+            Choose images or videos to upload...
+          </label>
+          <input
+            id="upload"
+            hidden
+            type="file"
+            multiple
+            accept="image/*, video/mp4"
+            onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+          />
+        </div>
+        <button
+          className="p-3 mx-auto border-none bg-[#274988] bg-opacity-50 hover:bg-opacity-100 rounded-md cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-700"
+          disabled={loading}
+          type="submit"
+        >
+          {loading ? "Uploading..." : "Upload"}
+        </button>
+        <aside className="px-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 text-xs md:text-sm lg:text-base">
+          {previews}
+        </aside>
+      </form>
     </section>
   );
 }
