@@ -1,4 +1,5 @@
 ---
+import { Image } from "@astrojs/image/components";
 import Layout from "../layouts/Layout.astro";
 
 const objects: { path: string; type: string; uploadedAt: string }[] =
@@ -25,8 +26,11 @@ const assets = objects.map((p) => ({
               <track kind="captions" />
             </video>
           ) : (
-            <img
+            <Image
               class="rounded-lg"
+              width={300}
+              height={300}
+              format="jpeg"
               loading="lazy"
               src={url}
               alt={`Marceline named as ${name}`}
