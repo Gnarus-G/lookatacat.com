@@ -113,13 +113,33 @@ const authorizeRequest: WorkerFunction<boolean> = (request, env, ctx) => {
   }
 };
 
+const getCorsOrigin: WorkerFunction<{}> = (req, env) => {
+  if (env.WEB_ORIGIN === "*") {
+    return {
+      "Access-Control-Allow-Origin": "*",
+    };
+  }
+
+  const origin = req.headers.get("origin");
+  const isAllowedOrigin = origin && env.WEB_ORIGIN.split(",").includes(origin);
+
+  if (!isAllowedOrigin) return {};
+
+  return {
+    "Access-Control-Allow-Origin": origin,
+    Vary: "Origin",
+  };
+};
+
 export default {
   async fetch(request, env, ctx) {
     const corsHeaders = {
-      "Access-Control-Allow-Origin": env.WEB_ORIGIN,
+      ...getCorsOrigin(request, env, ctx),
       "Access-Control-Allow-Methods": "PUT, GET, DELETE",
       "Access-Control-Allow-Headers": "*",
     };
+
+    console.log("CORS", "headers", corsHeaders);
 
     if (request.method === "OPTIONS") {
       return new Response("God speed!", {

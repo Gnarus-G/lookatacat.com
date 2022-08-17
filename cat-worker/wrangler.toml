@@ -13,8 +13,10 @@ preview_bucket_name = "mydev"
 [vars]
 WEB_ORIGIN = "*"
 
-[env.production.vars]
-WEB_ORIGIN = "https://mycat.is | https://lookatacat.com"
+[env.production]
+name = "cat-worker"
+r2_buckets = [{ binding = "catBucket", bucket_name = "mycat", preview_bucket_name = "mydev" }]
+vars = { WEB_ORIGIN = "https://www.mycat.is,https://www.lookatacat.com" }
 
 # The necessary secrets are:
 # - AUTH_KEY_SECRET
