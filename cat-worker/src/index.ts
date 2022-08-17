@@ -76,6 +76,7 @@ const catCrud: WorkerFunction<Promise<Response>> = async (request, env) => {
       const headers = new Headers();
       object.writeHttpMetadata(headers);
       headers.set("etag", object.httpEtag);
+      headers.set("Cache-Control", "max-age=31536000, immutable");
 
       return new Response(object.body, {
         headers,
