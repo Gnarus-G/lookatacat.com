@@ -1,0 +1,23 @@
+name = "cat-worker"
+main = "src/index.ts"
+compatibility_date = "2022-08-14"
+
+account_id = "008ee942138540d5b622163b3b0b2ffd"
+workers_dev = true
+
+[[r2_buckets]]
+binding = "catBucket"
+bucket_name = "cats"
+preview_bucket_name = "mydev"
+
+[vars]
+WEB_ORIGIN = "*"
+
+[env.production]
+name = "cat-worker"
+r2_buckets = [{ binding = "catBucket", bucket_name = "cats" }]
+vars = { WEB_ORIGIN = "https://www.mycat.is,https://www.lookatacat.com" }
+
+# The necessary secrets are:
+# - AUTH_KEY_SECRET
+# Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
