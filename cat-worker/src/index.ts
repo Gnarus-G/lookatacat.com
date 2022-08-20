@@ -40,18 +40,20 @@ const catCrud: WorkerFunction<Promise<Response>> = async (request, env) => {
 
   switch (request.method) {
     case "PUT":
-      await env.catBucket.put(key, request.body);
+      await env.catBucket.put(key, request.body, {
+        customMetadata: { mimeType: request.headers.get("Content-Type") ?? "" },
+      });
       return new Response(`Successfully uploaded ${key}!`);
     case "GET":
       if (!key) {
         //get all assets
         const allObjects = await env.catBucket.list({
-          include: ["httpMetadata"],
+          include: ["customMetadata"],
         });
 
         const assets = allObjects.objects.map((o) => ({
           path: o.key,
-          type: o.httpMetadata.contentType,
+          type: o.customMetadata.mimeType,
           uploadedAt: o.uploaded,
         }));
 
