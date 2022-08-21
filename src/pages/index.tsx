@@ -3,13 +3,16 @@ import {
   Button,
   Container,
   Grid,
+  Group,
   Header,
   Modal,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPhoto } from "@tabler/icons";
 import type { GetStaticProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useState } from "react";
 import Cat, { CatAsset } from "../components/Cat";
 import FileUpload from "../components/FileUpload";
@@ -29,6 +32,8 @@ const Home: NextPage<Props> = ({ cats }) => {
   const [openedCarousel, setOpenedCarousel] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
 
+  const session = useSession();
+
   return (
     <>
       <Head>
@@ -40,22 +45,34 @@ const Home: NextPage<Props> = ({ cats }) => {
         header={
           <Header
             sx={(theme) => ({
-              display: "flex",
-              alignItems: "center",
               backgroundColor: theme.colors.dark[6],
             })}
             height={60}
             p="xs"
           >
-            <Button
-              sx={{ marginLeft: "auto" }}
-              variant="gradient"
-              gradient={{ from: "indigo", to: "cyan" }}
-              onClick={() => setOpened(true)}
-              leftIcon={<IconPhoto />}
-            >
-              Upload
-            </Button>
+            <Group position="right">
+              {session.status === "authenticated" && (
+                <Button
+                  variant="gradient"
+                  gradient={{ from: "indigo", to: "cyan" }}
+                  onClick={() => setOpened(true)}
+                  leftIcon={<IconPhoto />}
+                >
+                  Upload
+                </Button>
+              )}
+              {session.status === "authenticated" ? (
+                <Link href="/api/auth/signout">
+                  <Button component="a" color="gray">
+                    Logout
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/api/auth/signin">
+                  <Button component="a">Login</Button>
+                </Link>
+              )}
+            </Group>
           </Header>
         }
       >

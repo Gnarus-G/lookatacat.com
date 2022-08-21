@@ -27,6 +27,7 @@
     "embla-carousel-react": "^7.0.1",
     "next": "12.2.5",
     "next-auth": "^4.10.2",
+    "nodemailer": "^6.7.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-form-z": "^0.0.2",
