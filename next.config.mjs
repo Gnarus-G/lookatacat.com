@@ -17,6 +17,6 @@ export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: [new URL(env.WORKER_ENDPOINT).hostname],
+    domains: [new URL(env.NEXT_PUBLIC_WORKER_ENDPOINT).hostname],
   },
 });

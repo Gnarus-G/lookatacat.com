@@ -25,10 +25,9 @@ type Cat = {
 
 type Props = {
   cats: Cat[];
-  catWorkerEndpoint: string;
 };
 
-const Home: NextPage<Props> = ({ cats, catWorkerEndpoint }) => {
+const Home: NextPage<Props> = ({ cats }) => {
   const hello = trpc.proxy.example.hello.useQuery({ text: "from tRPC" });
 
   const [opened, setOpened] = useState(false);
@@ -98,7 +97,7 @@ const Home: NextPage<Props> = ({ cats, catWorkerEndpoint }) => {
         onClose={() => setOpened(false)}
         title="Upload some more cats?"
       >
-        <FileUpload baseAssetUrl={catWorkerEndpoint} />
+        <FileUpload />
       </Modal>
     </>
   );
@@ -109,7 +108,7 @@ export default Home;
 export const getStaticProps: GetStaticProps<Props> = async () => {
   type CatAsset = { path: string; type: string; uploadedAt: string };
 
-  const catWorkerEndpoint = env.WORKER_ENDPOINT;
+  const catWorkerEndpoint = env.NEXT_PUBLIC_WORKER_ENDPOINT;
 
   const objs = await fetch(catWorkerEndpoint)
     .then((res) => res.json())
@@ -117,12 +116,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const cats = objs.map((p) => ({
     name: p.path,
-    url: `${env.WORKER_ENDPOINT}${p.path}`,
+    url: `${env.NEXT_PUBLIC_WORKER_ENDPOINT}${p.path}`,
     uploadedAt: new Date(p.uploadedAt).getTime(),
     isVideo: p.type.includes("video"),
   }));
 
   return {
-    props: { cats, catWorkerEndpoint },
+    props: { cats },
   };
 };

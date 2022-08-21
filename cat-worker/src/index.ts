@@ -99,8 +99,7 @@ const catCrud: WorkerFunction<Promise<Response>> = async (request, env) => {
 
 // Check requests for a pre-shared secret
 const hasValidHeader: WorkerFunction<boolean> = (request, env) => {
-  // return request.headers.get("X-Custom-Auth-Key") === env.AUTH_KEY_SECRET;
-  return true;
+  return request.headers.get("X-Custom-Auth-Key") === env.AUTH_KEY_SECRET;
 };
 
 const authorizeRequest: WorkerFunction<boolean> = (request, env, ctx) => {

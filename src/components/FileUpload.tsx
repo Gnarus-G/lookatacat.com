@@ -19,44 +19,73 @@ import {
   IconUpload,
   IconX,
 } from "@tabler/icons";
-import { FormEvent, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
+import { createFormInput, useForm } from "react-form-z";
+import { env } from "../env/client.mjs";
 
-export default function FileUpload({ baseAssetUrl }: { baseAssetUrl: string }) {
-  const ACCEPTABLE_MIME_TYPES = ["image/*", "video/mp4"];
+const ACCEPTABLE_MIME_TYPES = ["image/*", "video/mp4"];
+const WORKER_ENDPOINT = env.NEXT_PUBLIC_WORKER_ENDPOINT;
+const WORKER_ENDPOINT_SECRET = env.NEXT_PUBLIC_WORKER_ENDPOINT_AUTH_KEY;
+
+const MantineInput = createFormInput(TextInput);
+
+export default function FileUpload() {
   const theme = useMantineTheme();
-
-  const [uploadLoading, setUploadingLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [uploadSuccesses, setUploadSuccesses] = useState<
-    Record<string, string>
+    Record<string, boolean>
   >({});
-  const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
-  const [prefix, setPrefix] = useState("");
+  const [uploadErrors, setUploadErrors] = useState<
+    Record<string, string | boolean>
+  >({});
   const [files, setFiles] = useState<File[]>([]);
 
-  const uploadFiles = useCallback(async () => {
-    setUploadingLoading(true);
-    const uploads = files.map((file) =>
-      fetch(`${baseAssetUrl}${prefix}/${file.name}`, {
-        method: "PUT",
-        body: file,
-      })
-        .then((res) => res.text())
-        .then((msg) => setUploadSuccesses((m) => ({ ...m, [file.name]: msg })))
-        .catch((e) => {
-          console.error(e);
-          setUploadErrors((er) => ({ ...er, [file.name]: er.message ?? "" }));
-        })
-    );
-    await Promise.all(uploads);
-    setUploadingLoading(false);
-  }, [baseAssetUrl, files, prefix]);
+  const form = useForm({
+    schema: (z) =>
+      z.object({
+        prefix: z.string().min(1),
+        secret: z
+          .string()
+          .refine(
+            (s) => s === WORKER_ENDPOINT_SECRET,
+            "Psych! That's the wrong number!"
+          ),
+      }),
+    initial: { prefix: "", secret: "" },
+  });
 
-  const submitForm = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      uploadFiles();
-    },
-    [uploadFiles]
+  const submitForm = form.onSubmit(
+    useCallback(
+      async (data) => {
+        setUploading(true);
+        const uploads = files.map((file) =>
+          fetch(`${WORKER_ENDPOINT}${data.prefix}/${file.name}`, {
+            method: "PUT",
+            headers: {
+              "X-Custom-Auth-Key": data.secret,
+            },
+            body: file,
+          })
+            .then(async (res) => {
+              if (res.ok) return res.text();
+              throw new Error(await res.text());
+            })
+            .then(() =>
+              setUploadSuccesses((m) => ({ ...m, [file.name]: true }))
+            )
+            .catch((e) => {
+              console.error(e);
+              setUploadErrors((er) => ({
+                ...er,
+                [file.name]: e.message || true,
+              }));
+            })
+        );
+        await Promise.all(uploads);
+        setUploading(false);
+      },
+      [files]
+    )
   );
 
   const previews = files.map((file) => {
@@ -113,18 +142,19 @@ export default function FileUpload({ baseAssetUrl }: { baseAssetUrl: string }) {
   return (
     <form onSubmit={submitForm}>
       <Stack py="sm">
-        <TextInput
+        <MantineInput
           label="Prefix"
           placeholder="name of the cat (presumably)"
-          value={prefix}
-          onChange={(e) => setPrefix(e.target.value)}
+          for={[form, "prefix"]}
           withAsterisk
         />
-        <Dropzone
-          onDrop={setFiles}
-          maxSize={8 * 1024 ** 2}
-          accept={ACCEPTABLE_MIME_TYPES}
-        >
+        <MantineInput
+          label="Secret"
+          type="password"
+          for={[form, "secret"]}
+          withAsterisk
+        />
+        <Dropzone onDrop={setFiles} accept={ACCEPTABLE_MIME_TYPES}>
           <Group
             position="center"
             spacing="xs"
@@ -152,12 +182,12 @@ export default function FileUpload({ baseAssetUrl }: { baseAssetUrl: string }) {
           </Group>
         </Dropzone>
         <Button
-          loading={uploadLoading}
+          loading={uploading}
           type="submit"
           variant="gradient"
           gradient={{ from: "indigo", to: "cyan" }}
         >
-          {uploadLoading ? "Uploading..." : "Upload"}
+          {uploading ? "Uploading..." : "Upload"}
         </Button>
         <SimpleGrid cols={2} px="lg" sx={{ overflowY: "auto", maxHeight: 400 }}>
           {previews}
