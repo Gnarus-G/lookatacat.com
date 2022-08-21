@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@emotion/react': ^11.10.0
   '@emotion/server': ^11.10.0
+  '@mantine/carousel': ^5.2.0
   '@mantine/core': ^5.2.0
   '@mantine/dropzone': ^5.2.0
   '@mantine/hooks': ^5.2.0
@@ -19,6 +20,7 @@ specifiers:
   '@types/react-dom': 18.0.5
   '@typescript-eslint/eslint-plugin': ^5.33.0
   '@typescript-eslint/parser': ^5.33.0
+  embla-carousel-react: ^7.0.1
   eslint: 8.22.0
   eslint-config-next: 12.2.5
   next: 12.2.5
@@ -36,6 +38,7 @@ specifiers:
 dependencies:
   '@emotion/react': 11.10.0_luyos4mouogwq6z3wafb3re4ce
   '@emotion/server': 11.10.0
+  '@mantine/carousel': 5.2.0_d4j3t6hbab3gem5vzvfux7acaa
   '@mantine/core': 5.2.0_oieno5zhf6rdj2rxv2ylzy5cya
   '@mantine/dropzone': 5.2.0_ezbgt6i2ygqfucqyyjrcxmsr4m
   '@mantine/hooks': 5.2.0_react@18.2.0
@@ -47,6 +50,7 @@ dependencies:
   '@trpc/next': 10.0.0-alpha.41_swsi2krk7rxbszg7nq2pbtotdu
   '@trpc/react': 10.0.0-alpha.41_vgqtgumollrd7bf37gijtpkzk4
   '@trpc/server': 10.0.0-alpha.41
+  embla-carousel-react: 7.0.1_react@18.2.0
   next: 12.2.5_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.10.3_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
@@ -342,6 +346,21 @@ packages:
   /@iarna/toml/2.2.5:
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
     dev: true
+
+  /@mantine/carousel/5.2.0_d4j3t6hbab3gem5vzvfux7acaa:
+    resolution: {integrity: sha512-8Gkp7NLY860+hyOs1ChjYTHMR0xomJpt6HZRxQLJslGpzKY3WQ0+jDksWcYFEl7QNFim5vT7KnoTJnqkSiT9Fw==}
+    peerDependencies:
+      '@mantine/core': 5.2.0
+      '@mantine/hooks': 5.2.0
+      embla-carousel-react: 7.0.0
+      react: '>=16.8.0'
+    dependencies:
+      '@mantine/core': 5.2.0_oieno5zhf6rdj2rxv2ylzy5cya
+      '@mantine/hooks': 5.2.0_react@18.2.0
+      '@mantine/utils': 5.2.0_react@18.2.0
+      embla-carousel-react: 7.0.1_react@18.2.0
+      react: 18.2.0
+    dev: false
 
   /@mantine/core/5.2.0_oieno5zhf6rdj2rxv2ylzy5cya:
     resolution: {integrity: sha512-FWR+TtSu+kJjSFHSGedVLVshfTX5J/2v3e/aU+jGlsZmZrm+UHWI4FbqRuDIWI6QSDbWcaNXn03RYbKJRpGXSQ==}
@@ -1569,6 +1588,19 @@ packages:
     resolution: {integrity: sha512-asLFVfWWtJ90ZyOUHMqk7/S2w2guQKxUI2itj3d92ADHhxUSbCMGi1f1cBcJ7xM1To+pE/Khbwo1yuNbMEPKeA==}
     dependencies:
       readable-stream: 2.3.7
+    dev: false
+
+  /embla-carousel-react/7.0.1_react@18.2.0:
+    resolution: {integrity: sha512-D97sHIMNYAClp27u4N86RVBbN9cNVAIri1SC6oIEFqeIovSGSV795tTiQuRL6M4vGXvlEnau+QtrVPVbaG5mcQ==}
+    peerDependencies:
+      react: ^18.1.0
+    dependencies:
+      embla-carousel: 7.0.1
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel/7.0.1:
+    resolution: {integrity: sha512-+beEwrdj+FGyiz9a/prfj4IAG6CWDSRYUB3c+FKf17WUq5OxxKg5BVDF5FWcvC3EX6n8wFKQGXjkB3obnWZM8Q==}
     dev: false
 
   /emoji-regex/9.2.2:

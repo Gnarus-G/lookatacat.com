@@ -48,12 +48,12 @@ const catCrud: WorkerFunction<Promise<Response>> = async (request, env) => {
       if (!key) {
         //get all assets
         const allObjects = await env.catBucket.list({
-          include: ["customMetadata"],
+          include: ["customMetadata", "httpMetadata"],
         });
 
         const assets = allObjects.objects.map((o) => ({
           path: o.key,
-          type: o.customMetadata.mimeType,
+          type: o.customMetadata.mimeType ?? o.httpMetadata.contentType,
           uploadedAt: o.uploaded,
         }));
 

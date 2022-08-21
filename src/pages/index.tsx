@@ -1,36 +1,33 @@
 import {
   AppShell,
-  Box,
   Button,
   Container,
   Grid,
   Header,
   Modal,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconPhoto } from "@tabler/icons";
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import { useState } from "react";
+import Cat, { CatAsset } from "../components/Cat";
 import FileUpload from "../components/FileUpload";
+import ModalCarousel from "../components/ModalCarousel";
 import { env } from "../env/server.mjs";
 import { trpc } from "../utils/trpc";
 
-type Cat = {
-  name: string;
-  url: string;
-  uploadedAt: number;
-  isVideo: boolean;
-};
-
 type Props = {
-  cats: Cat[];
+  cats: CatAsset[];
 };
 
 const Home: NextPage<Props> = ({ cats }) => {
   const hello = trpc.proxy.example.hello.useQuery({ text: "from tRPC" });
 
   const [opened, setOpened] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<number>();
+  const [openedCarousel, setOpenedCarousel] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   return (
     <>
@@ -64,31 +61,17 @@ const Home: NextPage<Props> = ({ cats }) => {
       >
         <Container size="md" px="xs">
           <Grid gutter="md">
-            {cats
-              .sort((a, b) => +b.uploadedAt - +a.uploadedAt)
-              .map(({ name, url, isVideo }) => (
-                <Grid.Col key={name} xs={6} sm={4} md={3}>
-                  {isVideo ? (
-                    <Box component="video" src={url} autoPlay loop playsInline>
-                      <track kind="captions" />
-                    </Box>
-                  ) : (
-                    <Box
-                      component={Image}
-                      sx={(theme) => ({ borderRadius: theme.radius.lg })}
-                      src={url}
-                      loading="lazy"
-                      objectFit="cover"
-                      width="100%"
-                      height="100%"
-                      layout="responsive"
-                      alt={`Marceline named as ${name}`}
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
-                    />
-                  )}
-                </Grid.Col>
-              ))}
+            {cats.map((cat, index) => (
+              <Grid.Col key={cat.name} xs={6} sm={4} md={3}>
+                <Cat
+                  {...cat}
+                  onClick={() => {
+                    setSelectedImage(index);
+                    setOpenedCarousel(true);
+                  }}
+                />
+              </Grid.Col>
+            ))}
           </Grid>
         </Container>
       </AppShell>
@@ -99,6 +82,18 @@ const Home: NextPage<Props> = ({ cats }) => {
       >
         <FileUpload />
       </Modal>
+      <ModalCarousel
+        opened={openedCarousel && !isMobile}
+        withCloseButton={false}
+        size="xl"
+        centered
+        transition="rotate-left"
+        currentKey={selectedImage}
+        onClose={() => setOpenedCarousel(false)}
+        source={cats}
+        keySelector={(cat) => cat.name}
+        each={(cat) => <Cat {...cat} />}
+      />
     </>
   );
 };
@@ -114,12 +109,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     .then((res) => res.json())
     .then((d) => d.assets as CatAsset[]);
 
-  const cats = objs.map((p) => ({
-    name: p.path,
-    url: `${env.NEXT_PUBLIC_WORKER_ENDPOINT}${p.path}`,
-    uploadedAt: new Date(p.uploadedAt).getTime(),
-    isVideo: p.type.includes("video"),
-  }));
+  const cats = objs
+    .sort((a, b) => +new Date(b.uploadedAt) - +new Date(a.uploadedAt))
+    .map((p) => ({
+      name: p.path,
+      url: `${env.NEXT_PUBLIC_WORKER_ENDPOINT}${p.path}`,
+      isVideo: p.type.includes("video"),
+    }));
 
   return {
     props: { cats },
