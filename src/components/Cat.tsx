@@ -18,8 +18,11 @@ export default function Cat({ name, url, isVideo, onClick }: CatProps) {
       {isVideo ? (
         <Box
           component="video"
+          sx={(theme) => ({ borderRadius: theme.radius.lg, maxHeight: 735 })}
           src={url}
           autoPlay
+          width="100%"
+          height="100%"
           loop
           playsInline
           onClick={onClick}

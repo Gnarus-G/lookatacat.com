@@ -60,7 +60,7 @@ const Home: NextPage<Props> = ({ cats }) => {
         }
       >
         <Container size="md" px="xs">
-          <Grid gutter="md">
+          <Grid gutter="md" align="center">
             {cats.map((cat, index) => (
               <Grid.Col key={cat.name} xs={6} sm={4} md={3}>
                 <Cat
