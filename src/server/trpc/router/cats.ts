@@ -1,5 +1,7 @@
 import { authedProcedure, t } from "../utils";
 import { z } from "zod";
+import { getBaseUrl } from "utils/trpc";
+import { env } from "env/server.mjs";
 
 export const catsRouter = t.router({
   create: authedProcedure.input(z.string().min(1)).mutation(({ input, ctx }) =>
@@ -11,25 +13,28 @@ export const catsRouter = t.router({
     .input(
       z.object({ url: z.string(), catName: z.string(), isVideo: z.boolean() })
     )
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input: { url, catName, isVideo }, ctx }) => {
       const assetUpsertArg = {
         where: {
-          url: input.url,
+          url: url,
         },
         create: {
-          url: input.url,
-          forCat: { connect: { name: input.catName } },
+          url: url,
+          forCat: { connect: { name: catName } },
         },
         update: {
-          url: input.url,
+          url: url,
         },
       };
 
-      if (input.isVideo) {
-        return ctx.prisma.catVideo.upsert(assetUpsertArg);
+      if (isVideo) {
+        await ctx.prisma.catVideo.upsert(assetUpsertArg);
+        fetch(
+          `${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`
+        );
       }
-
-      return ctx.prisma.catPic.upsert(assetUpsertArg);
+      await ctx.prisma.catPic.upsert(assetUpsertArg);
+      fetch(`${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`);
     }),
   getOwnCats: authedProcedure.query(({ ctx }) => {
     return ctx.prisma.cat.findMany({

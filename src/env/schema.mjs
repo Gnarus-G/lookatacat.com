@@ -12,6 +12,7 @@ export const serverSchema = z.object({
   NEXTAUTH_URL: z.string().url(),
   EMAIL_SERVER: z.string(),
   EMAIL_FROM: z.string(),
+  REVALIDATION_SECRET: z.string(),
 });
 
 /**
