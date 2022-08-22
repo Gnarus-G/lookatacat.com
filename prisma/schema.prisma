@@ -15,7 +15,6 @@ datasource db {
 model Cat {
   id          String     @id @default(cuid())
   name        String     @unique
-  image       String
   owner       User       @relation("cat_ownership", fields: [ownerId], references: [id], onUpdate: NoAction)
   pics        CatPic[]
   videos      CatVideo[]

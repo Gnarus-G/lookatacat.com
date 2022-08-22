@@ -12,6 +12,7 @@ preview_bucket_name = "mydev"
 
 [vars]
 WEB_ORIGIN = "*"
+AUTH_KEY_SECRET = "asdf"
 
 [env.production]
 name = "cat-worker"

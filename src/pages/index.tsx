@@ -18,15 +18,12 @@ import Cat, { CatAsset } from "../components/Cat";
 import FileUpload from "../components/FileUpload";
 import ModalCarousel from "../components/ModalCarousel";
 import { env } from "../env/server.mjs";
-import { trpc } from "../utils/trpc";
 
 type Props = {
   cats: CatAsset[];
 };
 
 const Home: NextPage<Props> = ({ cats }) => {
-  const hello = trpc.proxy.example.hello.useQuery({ text: "from tRPC" });
-
   const [opened, setOpened] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number>();
   const [openedCarousel, setOpenedCarousel] = useState(false);

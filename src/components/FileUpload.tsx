@@ -3,6 +3,7 @@ import {
   Button,
   Group,
   Image,
+  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -22,6 +23,7 @@ import {
 import { useCallback, useState } from "react";
 import { createFormInput, useForm } from "react-form-z";
 import { env } from "../env/client.mjs";
+import { trpc } from "../utils/trpc";
 
 const ACCEPTABLE_MIME_TYPES = ["image/*", "video/mp4"];
 const WORKER_ENDPOINT = env.NEXT_PUBLIC_WORKER_ENDPOINT;
@@ -39,11 +41,19 @@ export default function FileUpload() {
     Record<string, string | boolean>
   >({});
   const [files, setFiles] = useState<File[]>([]);
+  const { mutate: addAsset } = trpc.proxy.cats.addAsset.useMutation();
+  const catsQuery = trpc.proxy.cats.getOwnCats.useQuery();
+  const myCats = catsQuery.data ?? [];
 
   const form = useForm({
     schema: (z) =>
       z.object({
-        prefix: z.string().min(1),
+        prefix: z
+          .string()
+          .refine(
+            (p) => !!myCats.find((c) => c.name === p),
+            "Must be one of your cats listed"
+          ),
         secret: z
           .string()
           .refine(
@@ -58,8 +68,9 @@ export default function FileUpload() {
     useCallback(
       async (data) => {
         setUploading(true);
+
         const uploads = files.map((file) =>
-          fetch(`${WORKER_ENDPOINT}${data.prefix}/${file.name}`, {
+          fetch(getAssetUrl(data.prefix, file), {
             method: "PUT",
             headers: {
               "X-Custom-Auth-Key": data.secret,
@@ -70,9 +81,14 @@ export default function FileUpload() {
               if (res.ok) return res.text();
               throw new Error(await res.text());
             })
-            .then(() =>
-              setUploadSuccesses((m) => ({ ...m, [file.name]: true }))
-            )
+            .then(() => {
+              setUploadSuccesses((m) => ({ ...m, [file.name]: true }));
+              addAsset({
+                url: getAssetUrl(data.prefix, file),
+                isVideo: file.type.includes("video"),
+                catName: data.prefix,
+              });
+            })
             .catch((e) => {
               console.error(e);
               setUploadErrors((er) => ({
@@ -82,9 +98,10 @@ export default function FileUpload() {
             })
         );
         await Promise.all(uploads);
+
         setUploading(false);
       },
-      [files]
+      [addAsset, files]
     )
   );
 
@@ -142,10 +159,13 @@ export default function FileUpload() {
   return (
     <form onSubmit={submitForm}>
       <Stack py="sm">
-        <MantineInput
-          label="Prefix"
-          placeholder="name of the cat (presumably)"
-          for={[form, "prefix"]}
+        <Select
+          label="Cat"
+          placeholder="Pick a cat"
+          onChange={(v) => v && form.setValues((d) => ({ ...d, prefix: v }))}
+          data={myCats.map((c) => ({ value: c.name, label: c.name }))}
+          value={form.data.prefix}
+          error={form.errors.prefix}
           withAsterisk
         />
         <MantineInput
@@ -195,4 +215,8 @@ export default function FileUpload() {
       </Stack>
     </form>
   );
+}
+
+function getAssetUrl(prefix: string, file: File) {
+  return `${WORKER_ENDPOINT}${prefix}/${file.name}`;
 }
