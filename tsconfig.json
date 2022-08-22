@@ -25,5 +25,5 @@
     "**/*.js",
     "**/*.mjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "cat-worker"]
 }
