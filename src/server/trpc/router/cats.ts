@@ -12,17 +12,24 @@ export const catsRouter = t.router({
       z.object({ url: z.string(), catName: z.string(), isVideo: z.boolean() })
     )
     .mutation(({ input, ctx }) => {
+      const assetUpsertArg = {
+        where: {
+          url: input.url,
+        },
+        create: {
+          url: input.url,
+          forCat: { connect: { name: input.catName } },
+        },
+        update: {
+          url: input.url,
+        },
+      };
+
       if (input.isVideo) {
-        return ctx.prisma.catVideo.create({
-          data: {
-            url: input.url,
-            forCat: { connect: { name: input.catName } },
-          },
-        });
+        return ctx.prisma.catVideo.upsert(assetUpsertArg);
       }
-      return ctx.prisma.catPic.create({
-        data: { url: input.url, forCat: { connect: { name: input.catName } } },
-      });
+
+      return ctx.prisma.catPic.upsert(assetUpsertArg);
     }),
   getOwnCats: authedProcedure.query(({ ctx }) => {
     return ctx.prisma.cat.findMany({
@@ -31,11 +38,24 @@ export const catsRouter = t.router({
       },
     });
   }),
-  getPics: t.procedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.catPic.findMany({
+  getCatAssets: t.procedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.cat.findUnique({
       where: {
-        forCat: {
-          name: input,
+        name: input,
+      },
+      include: {
+        owner: {
+          select: { name: true },
+        },
+        pics: {
+          select: {
+            url: true,
+          },
+        },
+        videos: {
+          select: {
+            url: true,
+          },
         },
       },
     });

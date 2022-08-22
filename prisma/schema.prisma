@@ -13,19 +13,21 @@ datasource db {
 }
 
 model Cat {
-  id          String     @id @default(cuid())
-  name        String     @unique
-  owner       User       @relation("cat_ownership", fields: [ownerId], references: [id], onUpdate: NoAction)
-  pics        CatPic[]
-  videos      CatVideo[]
-  ownerId     String
-  favoritedBy User[]
+  id             String     @id @default(cuid())
+  name           String     @unique
+  owner          User       @relation(fields: [ownerId], references: [id], onUpdate: NoAction)
+  pics           CatPic[]
+  videos         CatVideo[]
+  ownerId        String
+  favoritePic    CatPic?    @relation("favorite_cat_pic", fields: [favoritePicUrl], references: [url])
+  favoritePicUrl String?    @unique
 }
 
 model CatPic {
-  url    String @id
-  catId  String
-  forCat Cat    @relation(fields: [catId], references: [id])
+  url         String @id
+  catId       String
+  forCat      Cat    @relation(fields: [catId], references: [id], onUpdate: NoAction)
+  favoriteFor Cat?   @relation("favorite_cat_pic")
 }
 
 model CatVideo {
@@ -74,10 +76,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  cats          Cat[]     @relation("cat_ownership")
-
-  favoriteCat   Cat?    @relation(fields: [favoriteCatId], references: [id])
-  favoriteCatId String?
+  cats          Cat[]
 }
 
 model VerificationToken {

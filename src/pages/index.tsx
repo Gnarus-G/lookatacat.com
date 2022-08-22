@@ -7,6 +7,9 @@ import {
   Header,
   Modal,
 } from "@mantine/core";
+import { createSSGHelpers } from "@trpc/react/ssg";
+import superjson from "superjson";
+import { prisma } from "server/db/client";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPhoto } from "@tabler/icons";
 import type { GetStaticProps, NextPage } from "next";
@@ -14,29 +17,35 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
-import Cat, { CatAsset } from "../components/Cat";
+import Cat from "../components/Cat";
 import FileUpload from "../components/FileUpload";
 import ModalCarousel from "../components/ModalCarousel";
-import { env } from "../env/server.mjs";
+import { appRouter } from "../server/trpc/router";
+import { trpc } from "utils/trpc";
 
-type Props = {
-  cats: CatAsset[];
-};
-
-const Home: NextPage<Props> = ({ cats }) => {
+const Home: NextPage = () => {
+  const session = useSession();
   const [opened, setOpened] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number>();
   const [openedCarousel, setOpenedCarousel] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const { data: cat } = trpc.proxy.cats.getCatAssets.useQuery("Marceline");
+  const favorite = cat?.favoritePicUrl;
 
-  const session = useSession();
+  const catAssets =
+    cat?.videos
+      .map<{ url: string; isVideo?: boolean }>((v) => ({
+        url: v.url,
+        isVideo: true,
+      }))
+      .concat(cat.pics) ?? [];
 
   return (
     <>
       <Head>
-        <title>Marceline</title>
-        <meta name="description" content="Marceline, the cutest cat?" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>{cat?.name}</title>
+        <meta name="description" content={`${cat?.name}, the cutest cat?`} />
+        <link rel="icon" href={favorite ?? "/favicon.ico"} />
       </Head>
       <AppShell
         header={
@@ -75,15 +84,18 @@ const Home: NextPage<Props> = ({ cats }) => {
       >
         <Container size="md" px="xs">
           <Grid gutter="md" align="center">
-            {cats.map((cat, index) => (
-              <Grid.Col key={cat.name} xs={6} sm={4} md={3}>
-                <Cat
-                  {...cat}
-                  onClick={() => {
-                    setSelectedImage(index);
-                    setOpenedCarousel(true);
-                  }}
-                />
+            {catAssets.map((asset, index) => (
+              <Grid.Col
+                key={asset.url}
+                xs={6}
+                sm={4}
+                md={3}
+                onClick={() => {
+                  setSelectedImage(index);
+                  setOpenedCarousel(true);
+                }}
+              >
+                <Cat name={cat?.name} url={asset.url} isVideo={asset.isVideo} />
               </Grid.Col>
             ))}
           </Grid>
@@ -104,9 +116,9 @@ const Home: NextPage<Props> = ({ cats }) => {
         transition="rotate-left"
         currentKey={selectedImage}
         onClose={() => setOpenedCarousel(false)}
-        source={cats}
-        keySelector={(cat) => cat.name}
-        each={(cat) => <Cat {...cat} />}
+        source={catAssets}
+        keySelector={(a) => a.url}
+        each={(a) => <Cat name={cat?.name} url={a.url} isVideo={a.isVideo} />}
       />
     </>
   );
@@ -114,24 +126,18 @@ const Home: NextPage<Props> = ({ cats }) => {
 
 export default Home;
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  type CatAsset = { path: string; type: string; uploadedAt: string };
+export const getStaticProps: GetStaticProps = async () => {
+  const ssg = createSSGHelpers({
+    router: appRouter,
+    ctx: { session: null, prisma },
+    transformer: superjson,
+  });
 
-  const catWorkerEndpoint = env.NEXT_PUBLIC_WORKER_ENDPOINT;
-
-  const objs = await fetch(catWorkerEndpoint)
-    .then((res) => res.json())
-    .then((d) => d.assets as CatAsset[]);
-
-  const cats = objs
-    .sort((a, b) => +new Date(b.uploadedAt) - +new Date(a.uploadedAt))
-    .map((p) => ({
-      name: p.path,
-      url: `${env.NEXT_PUBLIC_WORKER_ENDPOINT}${p.path}`,
-      isVideo: p.type.includes("video"),
-    }));
+  await ssg.fetchQuery("cats.getCatAssets", "Marceline");
 
   return {
-    props: { cats },
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
   };
 };
