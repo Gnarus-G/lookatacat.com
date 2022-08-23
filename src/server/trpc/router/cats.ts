@@ -9,6 +9,14 @@ export const catsRouter = t.router({
       data: { name: input, ownerId: ctx.session.user.id },
     })
   ),
+  favoritePic: authedProcedure
+    .input(z.object({ url: z.string().url(), catName: z.string() }))
+    .mutation(({ input, ctx }) =>
+      ctx.prisma.cat.update({
+        where: { name: input.catName },
+        data: { favoritePic: { connect: { url: input.url } } },
+      })
+    ),
   addAsset: t.procedure
     .input(
       z.object({ url: z.string(), catName: z.string(), isVideo: z.boolean() })
