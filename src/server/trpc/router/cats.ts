@@ -73,4 +73,16 @@ export const catsRouter = t.router({
       },
     });
   }),
+  trashPic: authedProcedure
+    .input(z.string().url())
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.catPic.delete({ where: { url: input } });
+      await fetch(input, {
+        method: "DELETE",
+        headers: {
+          "X-Custom-Auth-Key": env.NEXT_PUBLIC_WORKER_ENDPOINT_AUTH_KEY,
+        },
+      });
+      await fetch(`${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`);
+    }),
 });

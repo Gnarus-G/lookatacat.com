@@ -1,6 +1,5 @@
 import {
   AppShell,
-  Box,
   Button,
   Container,
   Grid,

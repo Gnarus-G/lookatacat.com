@@ -1,5 +1,5 @@
 import { Box, ThemeIcon } from "@mantine/core";
-import { IconHeart } from "@tabler/icons";
+import { IconHeart, IconTrash } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useCallback } from "react";
@@ -12,11 +12,12 @@ type CatProps = {
 
 export default function CatPic({ name, url }: CatProps) {
   const session = useSession();
-  const { mutate } = trpc.proxy.cats.favoritePic.useMutation();
+  const { mutate: fave } = trpc.proxy.cats.favoritePic.useMutation();
+  const { mutate: trash } = trpc.proxy.cats.trashPic.useMutation();
 
   const favoriteThis = useCallback(() => {
-    if (name) mutate({ url, catName: name });
-  }, [mutate, name, url]);
+    if (name) fave({ url, catName: name });
+  }, [fave, name, url]);
 
   return (
     <Box
@@ -57,6 +58,29 @@ export default function CatPic({ name, url }: CatProps) {
           onClick={favoriteThis}
         >
           <IconHeart />
+        </ThemeIcon>
+      )}
+      {session.status === "authenticated" && (
+        <ThemeIcon
+          color="red"
+          radius="xl"
+          m={5}
+          sx={(theme) => ({
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            cursor: "pointer",
+            "&:hover": {
+              backgroundImage: theme.fn.gradient({
+                from: "red",
+                to: "pink",
+                deg: 45,
+              }),
+            },
+          })}
+          onClick={() => trash(url)}
+        >
+          <IconTrash />
         </ThemeIcon>
       )}
     </Box>
