@@ -34,7 +34,6 @@ const Home: NextPage = () => {
   const [openedCarousel, setOpenedCarousel] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const { data: cat } = trpc.proxy.cats.getCatAssets.useQuery("Marceline");
-  const favorite = cat?.favoritePicUrl;
   const weGotVids = !!cat?.videos.length;
 
   return (
@@ -42,7 +41,7 @@ const Home: NextPage = () => {
       <Head>
         <title>{cat?.name}</title>
         <meta name="description" content={`${cat?.name}, the cutest cat?`} />
-        <link rel="icon" href={favorite ?? "/favicon.ico"} />
+        <link rel="icon" href={"/favicon.ico"} />
       </Head>
       <AppShell
         header={
