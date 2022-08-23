@@ -1,11 +1,14 @@
 import {
   AppShell,
+  Box,
   Button,
   Container,
   Grid,
   Group,
   Header,
   Modal,
+  Space,
+  Title,
 } from "@mantine/core";
 import { createSSGHelpers } from "@trpc/react/ssg";
 import superjson from "superjson";
@@ -17,7 +20,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
-import Cat from "../components/Cat";
+import CatPic, { CatVideo } from "../components/Cat";
 import FileUpload from "../components/FileUpload";
 import ModalCarousel from "../components/ModalCarousel";
 import { appRouter } from "../server/trpc/router";
@@ -31,14 +34,7 @@ const Home: NextPage = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   const { data: cat } = trpc.proxy.cats.getCatAssets.useQuery("Marceline");
   const favorite = cat?.favoritePicUrl;
-
-  const catAssets =
-    cat?.videos
-      .map<{ url: string; isVideo?: boolean }>((v) => ({
-        url: v.url,
-        isVideo: true,
-      }))
-      .concat(cat.pics) ?? [];
+  const weGotVids = !!cat?.videos.length;
 
   return (
     <>
@@ -82,9 +78,25 @@ const Home: NextPage = () => {
           </Header>
         }
       >
-        <Container size="md" px="xs">
+        <Container size="md" p="xl">
+          {weGotVids && (
+            <>
+              <Title order={2}>Videos</Title>
+              <Space h="xl" />
+            </>
+          )}
           <Grid gutter="md" align="center">
-            {catAssets.map((asset, index) => (
+            {cat?.videos.map((asset) => (
+              <Grid.Col key={asset.url} xs={6} sm={4} md={3}>
+                <CatVideo src={asset.url} />
+              </Grid.Col>
+            ))}
+          </Grid>
+          <Space h="xl" />
+          <Title order={2}>Pictures</Title>
+          <Space h="xl" />
+          <Grid gutter="md" align="center">
+            {cat?.pics.map((asset, index) => (
               <Grid.Col
                 key={asset.url}
                 xs={6}
@@ -95,7 +107,7 @@ const Home: NextPage = () => {
                   setOpenedCarousel(true);
                 }}
               >
-                <Cat name={cat?.name} url={asset.url} isVideo={asset.isVideo} />
+                <CatPic name={cat?.name} url={asset.url} />
               </Grid.Col>
             ))}
           </Grid>
@@ -116,9 +128,9 @@ const Home: NextPage = () => {
         transition="rotate-left"
         currentKey={selectedImage}
         onClose={() => setOpenedCarousel(false)}
-        source={catAssets}
+        source={cat?.pics ?? []}
         keySelector={(a) => a.url}
-        each={(a) => <Cat name={cat?.name} url={a.url} isVideo={a.isVideo} />}
+        each={(a) => <CatPic name={cat?.name} url={a.url} />}
       />
     </>
   );

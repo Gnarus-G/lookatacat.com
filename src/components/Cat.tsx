@@ -5,40 +5,38 @@ import React from "react";
 type CatProps = {
   name?: string;
   url: string;
-  isVideo?: boolean;
 };
 
-export default function Cat({ name, url, isVideo }: CatProps) {
+export default function CatPic({ name, url }: CatProps) {
   return (
-    <>
-      {isVideo ? (
-        <Box
-          component="video"
-          sx={(theme) => ({ borderRadius: theme.radius.lg, maxHeight: 735 })}
-          src={url}
-          autoPlay
-          width="100%"
-          height="100%"
-          loop
-          playsInline
-        >
-          <track kind="captions" />
-        </Box>
-      ) : (
-        <Box
-          component={Image}
-          sx={(theme) => ({ borderRadius: theme.radius.lg })}
-          src={url}
-          loading="lazy"
-          objectFit="cover"
-          width="100%"
-          height="100%"
-          layout="responsive"
-          alt={name}
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
-        />
-      )}
-    </>
+    <Box
+      component={Image}
+      sx={(theme) => ({ borderRadius: theme.radius.lg })}
+      src={url}
+      loading="lazy"
+      objectFit="cover"
+      width="100%"
+      height="100%"
+      layout="responsive"
+      alt={name}
+      placeholder="blur"
+      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
+    />
+  );
+}
+
+export function CatVideo({ src }: { src: string }) {
+  return (
+    <Box
+      component="video"
+      src={src}
+      autoPlay
+      width="100%"
+      loop
+      playsInline
+      sx={{ objectFit: "cover", aspectRatio: "4/3" }}
+    >
+      <track kind="captions" />
+    </Box>
   );
 }
