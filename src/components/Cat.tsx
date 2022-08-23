@@ -11,7 +11,7 @@ export default function CatPic({ name, url }: CatProps) {
   return (
     <Box
       component={Image}
-      sx={(theme) => ({ borderRadius: theme.radius.lg })}
+      sx={(theme) => ({ borderRadius: theme.radius.sm })}
       src={url}
       loading="lazy"
       objectFit="cover"

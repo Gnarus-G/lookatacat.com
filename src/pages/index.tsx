@@ -8,13 +8,14 @@ import {
   Header,
   Modal,
   Space,
+  ThemeIcon,
   Title,
 } from "@mantine/core";
 import { createSSGHelpers } from "@trpc/react/ssg";
 import superjson from "superjson";
 import { prisma } from "server/db/client";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconPhoto } from "@tabler/icons";
+import { IconArrowsMaximize, IconPhoto } from "@tabler/icons";
 import type { GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -102,11 +103,27 @@ const Home: NextPage = () => {
                 xs={6}
                 sm={4}
                 md={3}
-                onClick={() => {
-                  setSelectedImage(index);
-                  setOpenedCarousel(true);
-                }}
+                sx={{ position: "relative" }}
               >
+                <ThemeIcon
+                  sx={(theme) => ({
+                    position: "absolute",
+                    zIndex: 1,
+                    right: 10,
+                    cursor: "pointer",
+                    transition: "background-color 100ms ease-in-out",
+                    "&:hover": {
+                      backgroundColor: theme.colors.blue,
+                    },
+                  })}
+                  variant="light"
+                  onClick={() => {
+                    setSelectedImage(index);
+                    setOpenedCarousel(true);
+                  }}
+                >
+                  <IconArrowsMaximize />
+                </ThemeIcon>
                 <CatPic name={cat?.name} url={asset.url} />
               </Grid.Col>
             ))}
