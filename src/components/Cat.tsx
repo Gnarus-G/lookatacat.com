@@ -31,10 +31,17 @@ export function CatVideo({ src }: { src: string }) {
       component="video"
       src={src}
       autoPlay
+      controls
       width="100%"
       loop
       playsInline
-      sx={{ objectFit: "cover", aspectRatio: "4/3" }}
+      sx={{
+        objectFit: "cover",
+        aspectRatio: "4/3",
+        "&:fullscreen": {
+          objectFit: "contain",
+        },
+      }}
     >
       <track kind="captions" />
     </Box>
