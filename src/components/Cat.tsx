@@ -103,6 +103,9 @@ export function CatVideo({ src }: { src: string }) {
         "&:fullscreen": {
           objectFit: "contain",
         },
+        "&:-webkit-full-screen": {
+          objectFit: "contain",
+        },
       }}
     >
       <track kind="captions" />
