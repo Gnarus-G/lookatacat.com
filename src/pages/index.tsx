@@ -104,6 +104,7 @@ const Home: NextPage = () => {
                 sx={{ position: "relative" }}
               >
                 <ThemeIcon
+                  hidden={isMobile}
                   sx={(theme) => ({
                     position: "absolute",
                     zIndex: 1,
