@@ -118,6 +118,12 @@ export default function FileUpload() {
             playsInline
             onLoad={() => URL.revokeObjectURL(fileUrl)}
             loop
+            style={{
+              objectFit: "cover",
+              width: "100%",
+              aspectRatio: "9/12",
+              borderRadius: 4
+            }}
           />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
@@ -125,7 +131,7 @@ export default function FileUpload() {
             src={fileUrl}
             alt={file.name}
             onLoad={() => URL.revokeObjectURL(fileUrl)}
-            radius="md"
+            radius="sm"
             caption={[file.type, (file.size / 1024).toFixed(2) + " KB"].join(
               "; "
             )}
