@@ -1,10 +1,7 @@
 import {
-  AppShell,
   Button,
   Container,
   Grid,
-  Group,
-  Header,
   Modal,
   Space,
   ThemeIcon,
@@ -18,7 +15,6 @@ import { IconArrowsMaximize, IconPhoto } from "@tabler/icons";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import { useState } from "react";
 import CatPic, { CatVideo } from "../components/Cat";
 import FileUpload from "../components/FileUpload";
@@ -165,7 +161,12 @@ export const getStaticProps: GetStaticProps<Params, Params> = async (ctx) => {
     transformer: superjson,
   });
 
-  const catName = ctx.params?.catName as string;
+  const catName = ctx.params?.catName;
+
+  if (!catName || !(await prisma.cat.findUnique({ where: { name: catName } })))
+    return {
+      notFound: true,
+    };
 
   await ssg.fetchQuery("cats.getCatAssets", catName);
 
