@@ -15,7 +15,7 @@ import superjson from "superjson";
 import { prisma } from "server/db/client";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowsMaximize, IconPhoto } from "@tabler/icons";
-import type { GetStaticProps, NextPage } from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -26,7 +26,7 @@ import ModalCarousel from "../components/ModalCarousel";
 import { appRouter } from "../server/trpc/router";
 import { trpc } from "utils/trpc";
 
-const Home: NextPage = () => {
+const CatPage: NextPage = () => {
   const session = useSession();
   const [opened, setOpened] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number>();
@@ -152,16 +152,39 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default CatPage;
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticPaths: GetStaticPaths<{
+  catName: string;
+}> = async () => {
+  const cats = await prisma.cat.findMany({
+    select: {
+      name: true,
+    },
+  });
+  return {
+    fallback: "blocking",
+    paths: cats.map((cat) => ({
+      params: {
+        catName: cat.name,
+      },
+    })),
+  };
+};
+
+export const getStaticProps: GetStaticProps<
+  Record<string, unknown>,
+  { catName: string }
+> = async (ctx) => {
+  if (!ctx.params) return { props: {} };
+
   const ssg = createSSGHelpers({
     router: appRouter,
     ctx: { session: null, prisma },
     transformer: superjson,
   });
 
-  await ssg.fetchQuery("cats.getCatAssets", "Marceline");
+  await ssg.fetchQuery("cats.getCatAssets", ctx.params?.catName);
 
   return {
     props: {

@@ -19,4 +19,13 @@ export default defineNextConfig({
   images: {
     domains: [new URL(env.NEXT_PUBLIC_WORKER_ENDPOINT).hostname],
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/Marceline",
+        permanent: true,
+      },
+    ];
+  },
 });
