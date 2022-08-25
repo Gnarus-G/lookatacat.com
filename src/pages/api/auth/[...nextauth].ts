@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }) {
       const invitees = await prisma.invitee.findMany();
       if (!invitees.find((i) => i.email === user.email))
-        throw new Error("You're not invited!");
+        throw "You're not invited!";
       return true;
     },
   },
@@ -29,6 +29,10 @@ export const authOptions: NextAuthOptions = {
       from: env.EMAIL_FROM,
     }),
   ],
+
+  pages: {
+    error: "/auth/error",
+  },
 };
 
 export default NextAuth(authOptions);

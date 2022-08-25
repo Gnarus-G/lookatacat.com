@@ -25,6 +25,7 @@ import FileUpload from "../components/FileUpload";
 import ModalCarousel from "../components/ModalCarousel";
 import { appRouter } from "../server/trpc/router";
 import { trpc } from "utils/trpc";
+import Layout from "components/Layout";
 
 type Params = {
   catName: string;
@@ -50,39 +51,18 @@ const CatPage: NextPage<Params> = ({ catName }) => {
         <meta name="og:image" content={cat?.favoritePicUrl ?? ""} />
         <meta name="og:description" content="The cutest cat?" />
       </Head>
-      <AppShell
-        header={
-          <Header
-            sx={(theme) => ({
-              backgroundColor: theme.colors.dark[6],
-            })}
-            height={60}
-            p="xs"
-          >
-            <Group position="right">
-              {session.status === "authenticated" && (
-                <Button
-                  variant="gradient"
-                  gradient={{ from: "indigo", to: "cyan" }}
-                  onClick={() => setOpened(true)}
-                  leftIcon={<IconPhoto />}
-                >
-                  Upload
-                </Button>
-              )}
-              {session.status === "authenticated" ? (
-                <Link href="/api/auth/signout">
-                  <Button component="a" color="gray">
-                    Logout
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/api/auth/signin">
-                  <Button component="a">Login</Button>
-                </Link>
-              )}
-            </Group>
-          </Header>
+      <Layout
+        headerActions={
+          session.status === "authenticated" && (
+            <Button
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan" }}
+              onClick={() => setOpened(true)}
+              leftIcon={<IconPhoto />}
+            >
+              Upload
+            </Button>
+          )
         }
       >
         <Container size="md" p="xl">
@@ -136,7 +116,7 @@ const CatPage: NextPage<Params> = ({ catName }) => {
             ))}
           </Grid>
         </Container>
-      </AppShell>
+      </Layout>
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
