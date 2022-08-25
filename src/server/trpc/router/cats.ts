@@ -9,6 +9,15 @@ export const catsRouter = t.router({
       data: { name: input, ownerId: ctx.session.user.id },
     })
   ),
+  getOwner: t.procedure.input(z.string()).query(({ input, ctx }) =>
+    ctx.prisma.cat
+      .findUnique({
+        where: {
+          name: input,
+        },
+      })
+      .owner()
+  ),
   favoritePic: authedProcedure
     .input(z.object({ url: z.string().url(), catName: z.string() }))
     .mutation(({ input, ctx }) =>
@@ -83,6 +92,8 @@ export const catsRouter = t.router({
           "X-Custom-Auth-Key": env.NEXT_PUBLIC_WORKER_ENDPOINT_AUTH_KEY,
         },
       });
-      await fetch(`${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`);
+      await fetch(
+        `${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`
+      );
     }),
 });

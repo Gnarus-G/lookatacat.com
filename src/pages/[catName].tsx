@@ -26,7 +26,11 @@ import ModalCarousel from "../components/ModalCarousel";
 import { appRouter } from "../server/trpc/router";
 import { trpc } from "utils/trpc";
 
-const CatPage: NextPage = () => {
+type Params = {
+  catName: string;
+};
+
+const CatPage: NextPage<Params> = ({ catName }) => {
   const session = useSession();
   const [opened, setOpened] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number>();
@@ -38,8 +42,8 @@ const CatPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{cat?.name}</title>
-        <meta name="description" content={`${cat?.name}, the cutest cat?`} />
+        <title>{catName}</title>
+        <meta name="description" content={`The cutest cat?`} />
         <link rel="icon" href={"/favicon.ico"} />
       </Head>
       <AppShell
@@ -123,7 +127,7 @@ const CatPage: NextPage = () => {
                 >
                   <IconArrowsMaximize />
                 </ThemeIcon>
-                <CatPic name={cat?.name} url={asset.url} />
+                <CatPic name={catName} url={asset.url} />
               </Grid.Col>
             ))}
           </Grid>
@@ -146,7 +150,7 @@ const CatPage: NextPage = () => {
         onClose={() => setOpenedCarousel(false)}
         source={cat?.pics ?? []}
         keySelector={(a) => a.url}
-        each={(a) => <CatPic name={cat?.name} url={a.url} />}
+        each={(a) => <CatPic name={catName} url={a.url} />}
       />
     </>
   );
@@ -154,9 +158,7 @@ const CatPage: NextPage = () => {
 
 export default CatPage;
 
-export const getStaticPaths: GetStaticPaths<{
-  catName: string;
-}> = async () => {
+export const getStaticPaths: GetStaticPaths<Params> = async () => {
   const cats = await prisma.cat.findMany({
     select: {
       name: true,
@@ -172,23 +174,21 @@ export const getStaticPaths: GetStaticPaths<{
   };
 };
 
-export const getStaticProps: GetStaticProps<
-  Record<string, unknown>,
-  { catName: string }
-> = async (ctx) => {
-  if (!ctx.params) return { props: {} };
-
+export const getStaticProps: GetStaticProps<Params, Params> = async (ctx) => {
   const ssg = createSSGHelpers({
     router: appRouter,
     ctx: { session: null, prisma },
     transformer: superjson,
   });
 
-  await ssg.fetchQuery("cats.getCatAssets", ctx.params?.catName);
+  const catName = ctx.params?.catName as string;
+
+  await ssg.fetchQuery("cats.getCatAssets", catName);
 
   return {
     props: {
       trpcState: ssg.dehydrate(),
+      catName,
     },
   };
 };
