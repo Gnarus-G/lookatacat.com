@@ -20,12 +20,14 @@ export const catsRouter = t.router({
   ),
   favoritePic: authedProcedure
     .input(z.object({ url: z.string().url(), catName: z.string() }))
-    .mutation(({ input, ctx }) =>
-      ctx.prisma.cat.update({
+    .mutation(async ({ input, ctx }) => {
+      const r = await ctx.prisma.cat.update({
         where: { name: input.catName },
         data: { favoritePic: { connect: { url: input.url } } },
-      })
-    ),
+      });
+      await revalidate(input.catName);
+      return r;
+    }),
   addAsset: t.procedure
     .input(
       z.object({ url: z.string(), catName: z.string(), isVideo: z.boolean() })
@@ -46,12 +48,10 @@ export const catsRouter = t.router({
 
       if (isVideo) {
         await ctx.prisma.catVideo.upsert(assetUpsertArg);
-        fetch(
-          `${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`
-        );
+        revalidate(catName);
       }
       await ctx.prisma.catPic.upsert(assetUpsertArg);
-      fetch(`${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`);
+      revalidate(catName);
     }),
   getOwnCats: authedProcedure.query(({ ctx }) => {
     return ctx.prisma.cat.findMany({
@@ -85,7 +85,16 @@ export const catsRouter = t.router({
   trashPic: authedProcedure
     .input(z.string().url())
     .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.catPic.delete({ where: { url: input } });
+      const pic = await ctx.prisma.catPic.delete({
+        where: { url: input },
+        select: {
+          forCat: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
       await fetch(input, {
         method: "DELETE",
         headers: {
@@ -95,5 +104,17 @@ export const catsRouter = t.router({
       await fetch(
         `${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`
       );
+      await revalidate(pic.forCat.name);
     }),
 });
+
+/**
+ * @param catPage Presumably the name of the cat for said page.
+ */
+function revalidate(catPage: string) {
+  return fetch(
+    `${getBaseUrl()}/api/revalidate?secret=${
+      env.REVALIDATION_SECRET
+    }?page=${catPage}`
+  );
+}
