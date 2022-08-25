@@ -43,8 +43,12 @@ const CatPage: NextPage<Params> = ({ catName }) => {
     <>
       <Head>
         <title>{catName}</title>
-        <meta name="description" content={`The cutest cat?`} />
         <link rel="icon" href={"/favicon.ico"} />
+        <meta name="author" content="Gnarus" />
+        <meta name="description" content="The cutest cat?" />
+        <meta name="og:title" content={catName} />
+        <meta name="og:image" content={cat?.favoritePicUrl ?? ""} />
+        <meta name="og:description" content="The cutest cat?" />
       </Head>
       <AppShell
         header={
