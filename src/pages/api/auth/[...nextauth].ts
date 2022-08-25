@@ -15,6 +15,12 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async signIn({ user }) {
+      const invitees = await prisma.invitee.findMany();
+      return invitees.find((i) => i.email === user.email)
+        ? true
+        : "You're not invited!";
+    },
   },
   adapter: PrismaAdapter(prisma),
   providers: [
