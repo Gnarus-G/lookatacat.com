@@ -36,7 +36,7 @@ const CatPage: NextPage<Params> = ({ catName }) => {
   const [selectedImage, setSelectedImage] = useState<number>();
   const [openedCarousel, setOpenedCarousel] = useState(false);
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const { data: cat } = trpc.proxy.cats.getCatAssets.useQuery("Marceline");
+  const { data: cat } = trpc.proxy.cats.getCatAssets.useQuery(catName);
   const weGotVids = !!cat?.videos.length;
 
   return (

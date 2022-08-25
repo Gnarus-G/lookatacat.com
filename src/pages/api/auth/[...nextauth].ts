@@ -17,9 +17,9 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }) {
       const invitees = await prisma.invitee.findMany();
-      return invitees.find((i) => i.email === user.email)
-        ? true
-        : "You're not invited!";
+      if (!invitees.find((i) => i.email === user.email))
+        throw new Error("You're not invited!");
+      return true;
     },
   },
   adapter: PrismaAdapter(prisma),
