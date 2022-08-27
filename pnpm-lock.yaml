@@ -29,7 +29,7 @@ specifiers:
   prisma: ^4.1.0
   react: 18.2.0
   react-dom: 18.2.0
-  react-form-z: ^0.0.2
+  react-form-z: ^0.0.4
   react-query: ^3.39.2
   superjson: ^1.9.1
   typescript: 4.7.4
@@ -57,7 +57,7 @@ dependencies:
   nodemailer: 6.7.8
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
-  react-form-z: 0.0.2_4xteftgt5jhbftymyb2527z5jq
+  react-form-z: 0.0.4_4xteftgt5jhbftymyb2527z5jq
   react-query: 3.39.2_biqbaboplfbrettd7655fr4n2y
   superjson: 1.9.1
   zod: 3.18.0
@@ -3164,8 +3164,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-form-z/0.0.2_4xteftgt5jhbftymyb2527z5jq:
-    resolution: {integrity: sha512-p0kVjJ8TLmXTYEuoLPgCOh56yfwAXVsr0LYvsWfgKNwdTzSrB1h+ZlyqNDmMhcXxhQXzyV0bVHDtcXZgNfpS9g==}
+  /react-form-z/0.0.4_4xteftgt5jhbftymyb2527z5jq:
+    resolution: {integrity: sha512-U8cu9LW5rC2Chm1JJ4/N4YwEk/SaSQoONtGN24cVXKOf4DK/Yo4Al2xyacIYYcZYjVoxAvOAuxKagOPIxTD3ug==}
     peerDependencies:
       react: '>=17.0.0'
       react-dom: '>=17.0.0'

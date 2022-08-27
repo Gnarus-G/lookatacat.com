@@ -30,7 +30,7 @@
     "nodemailer": "^6.7.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-form-z": "^0.0.2",
+    "react-form-z": "^0.0.4",
     "react-query": "^3.39.2",
     "superjson": "^1.9.1",
     "zod": "^3.18.0"

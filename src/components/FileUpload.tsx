@@ -122,7 +122,7 @@ export default function FileUpload() {
               objectFit: "cover",
               width: "100%",
               aspectRatio: "9/12",
-              borderRadius: 4
+              borderRadius: 4,
             }}
           />
         ) : (
@@ -168,7 +168,7 @@ export default function FileUpload() {
         <Select
           label="Cat"
           placeholder="Pick a cat"
-          onChange={(v) => v && form.setValues((d) => ({ ...d, prefix: v }))}
+          onChange={(v) => v && form.setData((d) => ({ ...d, prefix: v }))}
           data={myCats.map((c) => ({ value: c.name, label: c.name }))}
           value={form.data.prefix}
           error={form.errors.prefix}
