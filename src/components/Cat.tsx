@@ -8,15 +8,20 @@ import { trpc } from "utils/trpc";
 type CatProps = {
   name: string;
   url: string;
+  isFave?: boolean;
 };
 
-export default function CatPic({ name, url }: CatProps) {
+export default function CatPic({ name, url, isFave }: CatProps) {
   const { mutate: fave } = trpc.proxy.cats.favoritePic.useMutation();
   const { mutate: trash } = trpc.proxy.cats.trashPic.useMutation();
 
   const favoriteThis = useCallback(() => {
-    if (name) fave({ url, catName: name });
-  }, [fave, name, url]);
+    if (name && !isFave) fave({ url, catName: name });
+  }, [fave, isFave, name, url]);
+
+  const trashThis = useCallback(() => {
+    trash(url);
+  }, [trash, url]);
 
   return (
     <Box
@@ -24,6 +29,10 @@ export default function CatPic({ name, url }: CatProps) {
         position: "relative",
         borderRadius: theme.radius.sm,
         overflow: "hidden",
+        inset: 0,
+        "&:hover > div": {
+          opacity: 1,
+        },
       })}
     >
       <Image
@@ -40,43 +49,41 @@ export default function CatPic({ name, url }: CatProps) {
       <WhenCanManageCat name={name}>
         <>
           <ThemeIcon
-            color="pink"
-            radius="xl"
+            color={isFave ? "pink" : "dark"}
+            radius="sm"
+            p={4}
             m={5}
-            sx={(theme) => ({
+            sx={{
               position: "absolute",
               bottom: 0,
-              cursor: "pointer",
+              cursor: isFave ? "not-allowed" : "pointer",
+              opacity: isFave ? 0.5 : 0,
+              transition: "opacity 200ms, background-color 200ms",
               "&:hover": {
-                backgroundImage: theme.fn.gradient({
-                  from: "pink",
-                  to: "red",
-                  deg: 45,
-                }),
+                backgroundColor: isFave ? "darkred" : "#2e2e2e",
               },
-            })}
+            }}
             onClick={favoriteThis}
           >
             <IconHeart />
           </ThemeIcon>
           <ThemeIcon
             color="red"
-            radius="xl"
+            radius="sm"
+            p={4}
             m={5}
-            sx={(theme) => ({
+            sx={{
               position: "absolute",
               bottom: 0,
               right: 0,
               cursor: "pointer",
+              opacity: 0,
+              transition: "opacity 200ms, background-color 200ms",
               "&:hover": {
-                backgroundImage: theme.fn.gradient({
-                  from: "red",
-                  to: "pink",
-                  deg: 45,
-                }),
+                backgroundColor: "darkred",
               },
-            })}
-            onClick={() => trash(url)}
+            }}
+            onClick={trashThis}
           >
             <IconTrash />
           </ThemeIcon>

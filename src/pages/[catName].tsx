@@ -89,10 +89,12 @@ const CatPage: NextPage<Params> = ({ catName }) => {
               >
                 <ThemeIcon
                   hidden={isMobile}
+                  m={5}
+                  p={3}
                   sx={(theme) => ({
                     position: "absolute",
                     zIndex: 1,
-                    right: 10,
+                    right: 7,
                     cursor: "pointer",
                     transition: "background-color 100ms ease-in-out",
                     "&:hover": {
@@ -107,7 +109,11 @@ const CatPage: NextPage<Params> = ({ catName }) => {
                 >
                   <IconArrowsMaximize />
                 </ThemeIcon>
-                <CatPic name={catName} url={asset.url} />
+                <CatPic
+                  name={catName}
+                  url={asset.url}
+                  isFave={asset.url === cat.favoritePicUrl}
+                />
               </Grid.Col>
             ))}
           </Grid>
