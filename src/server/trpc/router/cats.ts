@@ -53,6 +53,9 @@ export const catsRouter = t.router({
       await ctx.prisma.catPic.upsert(assetUpsertArg);
       revalidate(catName);
     }),
+  getAllCats: t.procedure.query(({ ctx }) => {
+    return ctx.prisma.cat.findMany();
+  }),
   getOwnCats: authedProcedure.query(({ ctx }) => {
     return ctx.prisma.cat.findMany({
       where: {
