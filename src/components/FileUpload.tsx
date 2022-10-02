@@ -116,7 +116,6 @@ export default function FileUpload() {
             src={fileUrl}
             autoPlay
             playsInline
-            onLoad={() => URL.revokeObjectURL(fileUrl)}
             loop
             style={{
               objectFit: "cover",
@@ -126,11 +125,9 @@ export default function FileUpload() {
             }}
           />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
           <Image
             src={fileUrl}
             alt={file.name}
-            onLoad={() => URL.revokeObjectURL(fileUrl)}
             radius="sm"
             caption={[file.type, (file.size / 1024).toFixed(2) + " KB"].join(
               "; "
