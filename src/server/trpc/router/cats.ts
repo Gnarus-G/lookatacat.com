@@ -19,11 +19,16 @@ export const catsRouter = t.router({
           }
         )
     )
-    .mutation(({ input, ctx }) =>
-      ctx.prisma.cat.create({
+    .mutation(async ({ input, ctx }) => {
+      const createdCat = await ctx.prisma.cat.create({
         data: { name: input, ownerId: ctx.session.user.id },
-      })
-    ),
+      });
+
+      await revalidate("cats");
+      await revalidate(createdCat.name);
+
+      return createdCat;
+    }),
   getOwner: t.procedure.input(z.string()).query(({ input, ctx }) =>
     ctx.prisma.cat
       .findUnique({
@@ -119,20 +124,14 @@ export const catsRouter = t.router({
           "X-Custom-Auth-Key": env.NEXT_PUBLIC_WORKER_ENDPOINT_AUTH_KEY,
         },
       });
-      await fetch(
-        `${getBaseUrl()}/api/revalidate?secret=${env.REVALIDATION_SECRET}`
-      );
       await revalidate(pic.forCat.name);
     }),
 });
 
-/**
- * @param catPage Presumably the name of the cat for said page.
- */
-function revalidate(catPage: string) {
+function revalidate(page: string) {
   return fetch(
     `${getBaseUrl()}/api/revalidate?secret=${
       env.REVALIDATION_SECRET
-    }?page=${catPage}`
+    }?page=${page}`
   );
 }
