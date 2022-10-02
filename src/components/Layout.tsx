@@ -29,6 +29,7 @@ export default function Layout({
   const session = useSession();
   const router = useRouter();
   const [inviteUserDialogIsOpen, inviteDialog] = useDisclosure(false);
+  const { data: isAdmin } = trpc.proxy.users.isAdmin.useQuery();
 
   return (
     <AppShell
@@ -67,18 +68,20 @@ export default function Layout({
         </Header>
       }
       footer={
-        <Footer height={60} p="sm" withBorder={false}>
-          <Button variant="subtle" color="grape" onClick={inviteDialog.open}>
-            Invite a cat lover
-          </Button>
-          <Modal
-            opened={inviteUserDialogIsOpen}
-            onClose={inviteDialog.close}
-            title="Invite a cat lover"
-          >
-            <InviteForm />
-          </Modal>
-        </Footer>
+        isAdmin ? (
+          <Footer height={60} p="sm" withBorder={false}>
+            <Button variant="subtle" color="grape" onClick={inviteDialog.open}>
+              Invite a cat lover
+            </Button>
+            <Modal
+              opened={inviteUserDialogIsOpen}
+              onClose={inviteDialog.close}
+              title="Invite a cat lover"
+            >
+              <InviteForm />
+            </Modal>
+          </Footer>
+        ) : undefined
       }
     >
       {children}

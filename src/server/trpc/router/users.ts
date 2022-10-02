@@ -1,6 +1,7 @@
 import { authedProcedure, t } from "../utils";
 import { z } from "zod";
 import { prisma } from "server/db/client";
+import { env } from "env/server.mjs";
 
 export const usersRouter = t.router({
   invite: authedProcedure
@@ -24,4 +25,8 @@ export const usersRouter = t.router({
         },
       });
     }),
+
+  isAdmin: authedProcedure.query(({ ctx }) => {
+    return ctx.session.user.email === env.ADMIN_EMAIL;
+  }),
 });
