@@ -96,10 +96,16 @@ export const catsRouter = t.router({
           select: {
             url: true,
           },
+          orderBy: {
+            catId: "desc",
+          },
         },
         videos: {
           select: {
             url: true,
+          },
+          orderBy: {
+            catId: "desc",
           },
         },
       },
