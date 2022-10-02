@@ -7,17 +7,15 @@ import {
   Header,
   Modal,
   NavLink,
-  TextInput,
-  Transition,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconCheck } from "@tabler/icons";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactNode, useState } from "react";
-import { createFormInput, useForm } from "react-form-z";
+import React, { ReactNode } from "react";
 import { trpc } from "utils/trpc";
+import { AddMyCatForm } from "./AddMyCatForm";
+import { InviteForm } from "./InviteForm";
 
 const logout = () => signOut();
 
@@ -101,82 +99,5 @@ export default function Layout({
     >
       {children}
     </AppShell>
-  );
-}
-
-const Input = createFormInput(TextInput);
-
-function InviteForm() {
-  const form = useForm({
-    schema: (z) =>
-      z.object({
-        email: z.string().email(),
-      }),
-    initial: {
-      email: "",
-    },
-  });
-
-  const { mutate } = trpc.proxy.users.invite.useMutation({
-    onError(e) {
-      const errors = e.data.validationError?.fieldErrors ?? {};
-      form.setErrors(errors);
-    },
-  });
-
-  return (
-    <form onSubmit={form.onSubmit((d) => mutate(d.email))}>
-      <Input for={[form, "email"]} placeholder="Invitee's email..." />
-      <Group position="right" pt="xs">
-        <Button type="submit" color="cyan" size="xs">
-          Invite
-        </Button>
-      </Group>
-    </form>
-  );
-}
-
-function AddMyCatForm() {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const form = useForm({
-    schema: (z) =>
-      z.object({
-        name: z.string().min(1),
-      }),
-    initial: {
-      name: "",
-    },
-  });
-
-  const { mutate } = trpc.proxy.cats.create.useMutation({
-    onMutate() {
-      setIsSuccess(false);
-    },
-    onSuccess() {
-      setIsSuccess(true);
-    },
-    onError(e) {
-      form.setErrors(e.data.validationError?.fieldErrors ?? {});
-    },
-  });
-
-  return (
-    <form onSubmit={form.onSubmit((d) => mutate(d.name))}>
-      <Input for={[form, "name"]} placeholder="Name of the cat" />
-      <Group position="right" pt="xs">
-        <Button
-          type="submit"
-          color={isSuccess ? "green" : "cyan"}
-          size="xs"
-          rightIcon={
-            <Transition mounted={isSuccess} transition="scale-x">
-              {(s) => <IconCheck style={s} />}
-            </Transition>
-          }
-        >
-          {isSuccess ? "Added" : "Add"}
-        </Button>
-      </Group>
-    </form>
   );
 }
