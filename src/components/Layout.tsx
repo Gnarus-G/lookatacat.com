@@ -8,12 +8,14 @@ import {
   Modal,
   NavLink,
   TextInput,
+  Transition,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconCheck } from "@tabler/icons";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { createFormInput, useForm } from "react-form-z";
 import { trpc } from "utils/trpc";
 
@@ -29,6 +31,7 @@ export default function Layout({
   const session = useSession();
   const router = useRouter();
   const [inviteUserDialogIsOpen, inviteDialog] = useDisclosure(false);
+  const [addMyCatDialogIsOpen, addMyCatDialog] = useDisclosure(false);
   const { data: isAdmin } = trpc.proxy.users.isAdmin.useQuery();
 
   return (
@@ -60,20 +63,36 @@ export default function Layout({
         </Header>
       }
       footer={
-        isAdmin ? (
-          <Footer height={60} p="sm" withBorder={false}>
-            <Button variant="subtle" color="grape" onClick={inviteDialog.open}>
-              Invite a cat lover
-            </Button>
-            <Modal
-              opened={inviteUserDialogIsOpen}
-              onClose={inviteDialog.close}
-              title="Invite a cat lover"
-            >
-              <InviteForm />
-            </Modal>
-          </Footer>
-        ) : undefined
+        <Footer height={60} p="sm" withBorder={false}>
+          {isAdmin && (
+            <>
+              <Button
+                variant="subtle"
+                color="grape"
+                onClick={inviteDialog.open}
+              >
+                Invite a cat lover
+              </Button>
+              <Modal
+                opened={inviteUserDialogIsOpen}
+                onClose={inviteDialog.close}
+                title="Invite a cat lover"
+              >
+                <InviteForm />
+              </Modal>
+            </>
+          )}
+          <Button variant="subtle" onClick={addMyCatDialog.open}>
+            Add my cat
+          </Button>
+          <Modal
+            opened={addMyCatDialogIsOpen}
+            onClose={addMyCatDialog.close}
+            title="Add my cat"
+          >
+            <AddMyCatForm />
+          </Modal>
+        </Footer>
       }
     >
       {children}
@@ -107,6 +126,51 @@ function InviteForm() {
       <Group position="right" pt="xs">
         <Button type="submit" color="cyan" size="xs">
           Invite
+        </Button>
+      </Group>
+    </form>
+  );
+}
+
+function AddMyCatForm() {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const form = useForm({
+    schema: (z) =>
+      z.object({
+        name: z.string().min(1),
+      }),
+    initial: {
+      name: "",
+    },
+  });
+
+  const { mutate } = trpc.proxy.cats.create.useMutation({
+    onMutate() {
+      setIsSuccess(false);
+    },
+    onSuccess() {
+      setIsSuccess(true);
+    },
+    onError(e) {
+      form.setErrors(e.data.validationError?.fieldErrors ?? {});
+    },
+  });
+
+  return (
+    <form onSubmit={form.onSubmit((d) => mutate(d.name))}>
+      <Input for={[form, "name"]} placeholder="Name of the cat" />
+      <Group position="right" pt="xs">
+        <Button
+          type="submit"
+          color={isSuccess ? "green" : "cyan"}
+          size="xs"
+          rightIcon={
+            <Transition mounted={isSuccess} transition="scale-x">
+              {(s) => <IconCheck style={s} />}
+            </Transition>
+          }
+        >
+          {isSuccess ? "Added" : "Add"}
         </Button>
       </Group>
     </form>

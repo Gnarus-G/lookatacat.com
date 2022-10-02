@@ -1,14 +1,29 @@
 import { authedProcedure, t } from "../utils";
 import { z } from "zod";
 import { getBaseUrl } from "utils/trpc";
+import { prisma } from "server/db/client";
 import { env } from "env/server.mjs";
 
 export const catsRouter = t.router({
-  create: authedProcedure.input(z.string().min(1)).mutation(({ input, ctx }) =>
-    ctx.prisma.cat.create({
-      data: { name: input, ownerId: ctx.session.user.id },
-    })
-  ),
+  create: authedProcedure
+    .input(
+      z
+        .string()
+        .min(1)
+        .refine(
+          (name) =>
+            prisma.cat.findUnique({ where: { name } }).then((cat) => !cat),
+          {
+            message: "A cat by that name has already been added",
+            path: ["name"],
+          }
+        )
+    )
+    .mutation(({ input, ctx }) =>
+      ctx.prisma.cat.create({
+        data: { name: input, ownerId: ctx.session.user.id },
+      })
+    ),
   getOwner: t.procedure.input(z.string()).query(({ input, ctx }) =>
     ctx.prisma.cat
       .findUnique({
