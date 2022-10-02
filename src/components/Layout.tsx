@@ -34,15 +34,7 @@ export default function Layout({
   return (
     <AppShell
       header={
-        <Header
-          sx={(theme) => ({
-            backgroundColor: theme.colors.dark[6],
-            boxShadow: `0 5px 30px ${theme.colors.dark[6]}, 0 10px 50px ${theme.colors.dark[6]}, 0 15px 70px ${theme.colors.dark[6]}`,
-          })}
-          height={60}
-          p="xs"
-          withBorder={false}
-        >
+        <Header height={60} p="xs" withBorder={false}>
           <Group position="right">
             <Box sx={{ marginRight: "auto" }}>
               <Link href="/cats" passHref>
