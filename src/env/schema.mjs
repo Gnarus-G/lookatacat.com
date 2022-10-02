@@ -13,6 +13,7 @@ export const serverSchema = z.object({
   EMAIL_SERVER: z.string(),
   EMAIL_FROM: z.string(),
   REVALIDATION_SECRET: z.string(),
+  ADMIN_EMAIL: z.string(),
 });
 
 /**
