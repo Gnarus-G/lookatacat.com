@@ -82,16 +82,20 @@ export default function Layout({
               </Modal>
             </>
           )}
-          <Button variant="subtle" onClick={addMyCatDialog.open}>
-            Add my cat
-          </Button>
-          <Modal
-            opened={addMyCatDialogIsOpen}
-            onClose={addMyCatDialog.close}
-            title="Add my cat"
-          >
-            <AddMyCatForm />
-          </Modal>
+          {session.status === "authenticated" && (
+            <>
+              <Button variant="subtle" onClick={addMyCatDialog.open}>
+                Add my cat
+              </Button>
+              <Modal
+                opened={addMyCatDialogIsOpen}
+                onClose={addMyCatDialog.close}
+                title="Add my cat"
+              >
+                <AddMyCatForm />
+              </Modal>
+            </>
+          )}
         </Footer>
       }
     >
