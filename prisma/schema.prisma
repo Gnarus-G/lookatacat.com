@@ -2,14 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Cat {
@@ -21,6 +20,8 @@ model Cat {
   ownerId        String
   favoritePic    CatPic?    @relation("favorite_cat_pic", fields: [favoritePicUrl], references: [url])
   favoritePicUrl String?    @unique
+
+  @@index([ownerId])
 }
 
 model CatPic {
@@ -28,12 +29,16 @@ model CatPic {
   catId       String
   forCat      Cat    @relation(fields: [catId], references: [id], onUpdate: NoAction)
   favoriteFor Cat?   @relation("favorite_cat_pic")
+
+  @@index([catId])
 }
 
 model CatVideo {
   url    String @id
   catId  String
   forCat Cat    @relation(fields: [catId], references: [id])
+
+  @@index([catId])
 }
 
 // Email allowed to register 
@@ -58,6 +63,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -66,6 +72,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {
