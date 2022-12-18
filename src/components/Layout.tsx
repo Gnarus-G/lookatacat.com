@@ -54,7 +54,7 @@ export default function Layout({
               </Button>
             ) : (
               <Link href="/auth/signin">
-                <Button component="a">Login</Button>
+                <Button>Login</Button>
               </Link>
             )}
           </Group>

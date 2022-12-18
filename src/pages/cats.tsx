@@ -9,12 +9,16 @@ import Link from "next/link";
 import React from "react";
 import { appRouter } from "server/trpc/router";
 import { trpc } from "utils/trpc";
+import Head from "next/head";
 
 export default function Cats() {
   const { data: cats } = trpc.proxy.cats.getAllCats.useQuery();
 
   return (
     <Layout>
+      <Head>
+        <title>All cats</title>
+      </Head>
       <Container size="md">
         <Grid>
           {cats?.map((c) => (
