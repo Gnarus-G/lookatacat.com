@@ -4,8 +4,9 @@ import { SessionProvider } from "next-auth/react";
 import type { AppType } from "next/dist/shared/lib/utils";
 import { trpc } from "../utils/trpc";
 import { MantineProvider } from "@mantine/core";
+import { Session } from "next-auth";
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType<{ session: Session }> = ({ Component, pageProps }) => {
   return (
     <SessionProvider session={pageProps.session}>
       <MantineProvider
