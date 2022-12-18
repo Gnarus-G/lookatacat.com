@@ -1,6 +1,6 @@
 import superjson from "superjson";
 import { prisma } from "server/db/client";
-import { Container, Grid, Group, NavLink, Text } from "@mantine/core";
+import { Box, Container, Grid, Group, NavLink, Text } from "@mantine/core";
 import { createSSGHelpers } from "@trpc/react/ssg";
 import Layout from "components/Layout";
 import { GetStaticProps } from "next";
@@ -23,17 +23,17 @@ export default function Cats() {
         <Grid>
           {cats?.map((c) => (
             <Grid.Col key={c.id} xs={6} sm={4} md={3}>
-              <Image
-                src={c.favoritePicUrl ?? ""}
-                loading="lazy"
-                objectFit="cover"
-                width="100%"
-                height="100%"
-                layout="responsive"
-                alt={c.name}
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
-              />
+              <Box sx={{ position: "relative", aspectRatio: "1/1" }}>
+                <Image
+                  src={c.favoritePicUrl ?? ""}
+                  style={{ objectFit: "cover" }}
+                  fill
+                  sizes="(max-width: 768px) 90vw, 250px"
+                  alt={c.name}
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
+                />
+              </Box>
               <Group position="center" spacing={0} pt="xs">
                 <Text>See more of</Text>
                 <span>

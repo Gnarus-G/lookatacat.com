@@ -29,6 +29,7 @@ export default function CatPic({ name, url, isFave }: CatProps) {
         position: "relative",
         borderRadius: theme.radius.sm,
         overflow: "hidden",
+        aspectRatio: "1/1",
         inset: 0,
         "&:hover > div": {
           opacity: 1,
@@ -37,11 +38,9 @@ export default function CatPic({ name, url, isFave }: CatProps) {
     >
       <Image
         src={url}
-        loading="lazy"
-        objectFit="cover"
-        width="100%"
-        height="100%"
-        layout="responsive"
+        style={{ objectFit: "cover" }}
+        fill
+        sizes="(max-width: 768px) 70vw, 250px, 750px"
         alt={name}
         placeholder="blur"
         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
