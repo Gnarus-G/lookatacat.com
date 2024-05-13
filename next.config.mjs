@@ -1,6 +1,3 @@
-// @ts-check
-import { env } from "./src/env/server.mjs";
-
 /**
  * Don't be scared of the generics here.
  * All they do is to give us autocompletion when using this.
@@ -17,7 +14,7 @@ export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: [new URL(env.NEXT_PUBLIC_WORKER_ENDPOINT).hostname],
+    domains: [new URL(process.env.NEXT_PUBLIC_WORKER_ENDPOINT).hostname],
   },
   async redirects() {
     return [
