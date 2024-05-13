@@ -27,6 +27,31 @@ type Params = {
   catName: string;
 };
 
+function MetaTags(props: {
+  title: string;
+  description: string;
+  image: string | null | undefined;
+}) {
+  return (
+    <>
+      <meta name="author" content="Gnarus" />
+      <meta name="description" content={props.description} />
+
+      {/* <!-- Open Graph / Facebook --> */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={props.title} />
+      <meta property="og:description" content="The cutest cat?" />
+      {props.image && <meta property="og:image" content={props.image} />}
+
+      {/* <!-- Twitter --> */}
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:title" content={props.title} />
+      <meta property="twitter:description" content="The cutest cat?" />
+      {props.image && <meta property="twitter:image" content={props.image} />}
+    </>
+  );
+}
+
 const CatPage: NextPage<Params> = ({ catName }) => {
   const session = useSession();
   const [opened, setOpened] = useState(false);
@@ -41,11 +66,11 @@ const CatPage: NextPage<Params> = ({ catName }) => {
       <Head>
         <title>{catName}</title>
         <link rel="icon" href={"/favicon.ico"} />
-        <meta name="author" content="Gnarus" />
-        <meta name="description" content="The cutest cat?" />
-        <meta name="og:title" content={catName} />
-        <meta name="og:image" content={cat?.favoritePicUrl ?? ""} />
-        <meta name="og:description" content="The cutest cat?" />
+        <MetaTags
+          title={catName}
+          image={cat?.favoritePicUrl}
+          description="The cutest cat?"
+        />
       </Head>
       <Layout
         headerActions={
