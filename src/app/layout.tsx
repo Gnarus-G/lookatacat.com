@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-dvh">
+    <html lang="en" className="h-dvh  [&_input]:bg-gray-700">
       <body className="bg-dark text-white h-full flex flex-col gap-3">
         <Header />
         <main className="flex-grow">{children}</main>
