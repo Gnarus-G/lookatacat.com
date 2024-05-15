@@ -13,7 +13,7 @@ export default function Upload() {
       <label
         role="button"
         tabIndex={0}
-        className="bg-blue-500 hover:bg-blue-600 rounded-lg p-2 transition active:scale-95"
+        className="bg-blue-600 hover:bg-blue-700 rounded px-4 py-2 transition active:scale-95 font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
       >
         Choose files
         <input

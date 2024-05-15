@@ -15,6 +15,7 @@
     "@paralleldrive/cuid2": "^2.2.2",
     "drizzle-orm": "^0.30.10",
     "embla-carousel-react": "^7.1.0",
+    "lucide-react": "^0.378.0",
     "next": "^14.2.3",
     "next-auth": "5.0.0-beta.18",
     "nodemailer": "^6.9.13",

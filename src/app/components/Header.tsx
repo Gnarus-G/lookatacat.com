@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth, signIn, signOut } from "../auth";
 import Upload from "./Upload";
+import Button from "./Button";
 
 export default async function Header() {
   const session = await auth();
@@ -33,7 +34,7 @@ export function SignIn() {
         await signIn();
       }}
     >
-      <button type="submit">Sign In</button>
+      <Button type="submit">Sign In</Button>
     </form>
   );
 }
@@ -46,9 +47,9 @@ export function SignOut() {
         await signOut();
       }}
     >
-      <button type="submit" className="text-red-50">
+      <Button type="submit" className="bg-gray-600 hover:bg-gray-700">
         Sign Out
-      </button>
+      </Button>
     </form>
   );
 }
