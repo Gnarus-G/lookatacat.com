@@ -10,9 +10,6 @@ export default {
   dialect: "postgresql",
   out: "./src/drizzle",
   schema: "./src/drizzle/schema.ts",
-  introspect: {
-    casing: "preserve",
-  },
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
