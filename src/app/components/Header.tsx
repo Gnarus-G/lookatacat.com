@@ -6,13 +6,21 @@ export default async function Header() {
   const session = await auth();
 
   return (
-    <header className="flex gap-5">
+    <header className="w-full flex items-center gap-5 p-3">
       <nav>
-        <Link href="/cats">All Cats</Link>
+        <Link href="/cats" className="text-blue-300">
+          All Cats
+        </Link>
       </nav>
-      {!session?.user && <SignIn />}
-      {!!session?.user && <SignOut />}
-      {!!session?.user && <Upload />}
+      <ul className="ml-auto flex items-center gap-5">
+        {!session?.user && <SignIn />}
+        {!!session?.user && (
+          <>
+            <Upload />
+            <SignOut />
+          </>
+        )}
+      </ul>
     </header>
   );
 }
@@ -38,7 +46,9 @@ export function SignOut() {
         await signOut();
       }}
     >
-      <button type="submit">Sign Out</button>
+      <button type="submit" className="text-red-50">
+        Sign Out
+      </button>
     </form>
   );
 }
