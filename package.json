@@ -12,19 +12,7 @@
   "dependencies": {
     "@auth/core": "^0.31.0",
     "@auth/drizzle-adapter": "^1.1.0",
-    "@emotion/react": "^11.11.4",
-    "@emotion/server": "^11.11.0",
-    "@mantine/carousel": "^5.10.5",
-    "@mantine/core": "^5.10.5",
-    "@mantine/dropzone": "^5.10.5",
-    "@mantine/hooks": "^5.10.5",
-    "@mantine/next": "^5.10.5",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@tabler/icons": "^1.119.0",
-    "@trpc/client": "10.0.0-alpha.41",
-    "@trpc/next": "10.0.0-alpha.41",
-    "@trpc/react": "10.0.0-alpha.41",
-    "@trpc/server": "10.0.0-alpha.41",
     "drizzle-orm": "^0.30.10",
     "embla-carousel-react": "^7.1.0",
     "next": "^14.2.3",
@@ -34,8 +22,6 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-form-z": "^0.0.5",
-    "react-query": "^3.39.3",
-    "superjson": "^1.13.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {

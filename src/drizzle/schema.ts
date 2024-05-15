@@ -1,3 +1,4 @@
+import { createId } from "@paralleldrive/cuid2";
 import {
   pgTable,
   index,
@@ -8,13 +9,19 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
+const cuid = (column: string) =>
+  varchar(column, { length: 128 })
+    .notNull()
+    .$defaultFn(() => createId());
+
 export const Cat = pgTable(
   "cat",
   {
-    id: varchar("id", { length: 191 }).notNull(),
-    name: varchar("name", { length: 191 }).notNull(),
-    ownerId: varchar("ownerId", { length: 191 }).notNull(),
-    favoritePicUrl: varchar("favoritePicUrl", { length: 191 }),
+    id: cuid("id").primaryKey(),
+    name: text("name").notNull(),
+    ownerId: varchar("ownerId", { length: 128 }).notNull(),
+    favoritePicUrl: text("favoritePicUrl"),
+    createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => {
     return {
@@ -22,31 +29,28 @@ export const Cat = pgTable(
       favoritePicUrl_key: index("Cat_favoritePicUrl_key").on(
         table.favoritePicUrl
       ),
-      Cat_id: primaryKey({ columns: [table.id], name: "Cat_id" }),
     };
   }
 );
 
 export const CatPic = pgTable("cat_pic", {
-  url: varchar("url", { length: 191 }).notNull(),
-  catId: varchar("catId", { length: 191 }).notNull(),
+  url: text("url").notNull(),
+  catId: varchar("catId", { length: 128 }).notNull(),
 });
 
 export const CatVideo = pgTable("cat_video", {
-  url: varchar("url", { length: 191 }).notNull(),
-  catId: varchar("catId", { length: 191 }).notNull(),
+  url: text("url").notNull(),
+  catId: varchar("catId", { length: 128 }).notNull(),
 });
 
 export const Invitee = pgTable("invitee", {
-  email: varchar("email", { length: 191 }).notNull(),
+  email: text("email").notNull(),
 });
 
 // Auth schemas
 
 export const Users = pgTable("user", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+  id: cuid("id").primaryKey(),
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
@@ -56,7 +60,7 @@ export const Users = pgTable("user", {
 export const Accounts = pgTable(
   "account",
   {
-    userId: text("userId")
+    userId: varchar("userId", { length: 128 })
       .notNull()
       .references(() => Users.id, { onDelete: "cascade" }),
     type: text("type").$type<string>().notNull(),
@@ -79,7 +83,7 @@ export const Accounts = pgTable(
 
 export const Sessions = pgTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
-  userId: text("userId")
+  userId: varchar("userId", { length: 128 })
     .notNull()
     .references(() => Users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),

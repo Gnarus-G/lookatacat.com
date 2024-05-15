@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth, signIn, signOut } from "../auth";
+import Upload from "./Upload";
 
 export default async function Header() {
   const session = await auth();
@@ -11,6 +12,7 @@ export default async function Header() {
       </nav>
       {!session?.user && <SignIn />}
       {!!session?.user && <SignOut />}
+      {!!session?.user && <Upload />}
     </header>
   );
 }
