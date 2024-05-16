@@ -7,7 +7,7 @@ export default async function Header() {
   const session = await auth();
 
   return (
-    <header className="w-full flex items-center gap-5 p-3">
+    <header className="sticky top-0 w-full flex items-center gap-5 p-3">
       <nav>
         <Link href="/cats" className="text-blue-300">
           All Cats
