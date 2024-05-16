@@ -21,7 +21,7 @@ export default defineNextConfig({
     return [
       {
         source: "/",
-        destination: "/wn19w3cc6lw8qiq5d6u9rhuy",
+        destination: "/cl748tl2n0139vpcxxw4r0b5f",
         permanent: true,
       },
     ];
