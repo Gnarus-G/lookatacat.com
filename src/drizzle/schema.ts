@@ -8,34 +8,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
-export const Account = pgTable(
-  "Account",
-  {
-    id: varchar("id", { length: 191 }).notNull(),
-    userId: varchar("userId", { length: 191 }).notNull(),
-    type: varchar("type", { length: 191 }).notNull(),
-    provider: varchar("provider", { length: 191 }).notNull(),
-    providerAccountId: varchar("providerAccountId", { length: 191 }).notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: varchar("token_type", { length: 191 }),
-    scope: varchar("scope", { length: 191 }),
-    id_token: text("id_token"),
-    session_state: varchar("session_state", { length: 191 }),
-  },
-  (table) => {
-    return {
-      provider_providerAccountId_key: index(
-        "Account_provider_providerAccountId_key"
-      ).on(table.provider, table.providerAccountId),
-      Account_id: primaryKey({ columns: [table.id], name: "Account_id" }),
-    };
-  }
-);
-
 export const Cat = pgTable(
-  "Cat",
+  "cat",
   {
     id: varchar("id", { length: 191 }).notNull(),
     name: varchar("name", { length: 191 }).notNull(),
@@ -53,69 +27,72 @@ export const Cat = pgTable(
   }
 );
 
-export const CatPic = pgTable("CatPic", {
+export const CatPic = pgTable("cat_pic", {
   url: varchar("url", { length: 191 }).notNull(),
   catId: varchar("catId", { length: 191 }).notNull(),
 });
 
-export const CatVideo = pgTable("CatVideo", {
+export const CatVideo = pgTable("cat_video", {
   url: varchar("url", { length: 191 }).notNull(),
   catId: varchar("catId", { length: 191 }).notNull(),
 });
 
-export const Invitee = pgTable("Invitee", {
+export const Invitee = pgTable("invitee", {
   email: varchar("email", { length: 191 }).notNull(),
 });
 
-export const Session = pgTable(
-  "Session",
+// Auth schemas
+
+export const Users = pgTable("user", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name"),
+  email: text("email").notNull(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
+});
+
+export const Accounts = pgTable(
+  "account",
   {
-    id: varchar("id", { length: 191 }).notNull(),
-    sessionToken: varchar("sessionToken", { length: 191 }).notNull(),
-    userId: varchar("userId", { length: 191 }).notNull(),
-    expires: timestamp("expires", { mode: "string", precision: 3 }).notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => Users.id, { onDelete: "cascade" }),
+    type: text("type").$type<string>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
   },
-  (table) => {
-    return {
-      sessionToken_key: index("Session_sessionToken_key").on(
-        table.sessionToken
-      ),
-      Session_id: primaryKey({ columns: [table.id], name: "Session_id" }),
-    };
-  }
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  })
 );
 
-export const User = pgTable(
-  "User",
-  {
-    id: varchar("id", { length: 191 }).notNull(),
-    name: varchar("name", { length: 191 }),
-    email: varchar("email", { length: 191 }),
-    emailVerified: timestamp("emailVerified", { mode: "string", precision: 3 }),
-    image: varchar("image", { length: 191 }),
-  },
-  (table) => {
-    return {
-      email_key: index("User_email_key").on(table.email),
-      User_id: primaryKey({ columns: [table.id], name: "User_id" }),
-    };
-  }
-);
+export const Sessions = pgTable("session", {
+  sessionToken: text("sessionToken").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => Users.id, { onDelete: "cascade" }),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
 
-export const VerificationToken = pgTable(
-  "VerificationToken",
+export const VerificationTokens = pgTable(
+  "verificationToken",
   {
-    identifier: varchar("identifier", { length: 191 }).notNull(),
-    token: varchar("token", { length: 191 }).notNull(),
-    expires: timestamp("expires", { mode: "string", precision: 3 }).notNull(),
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
   },
-  (table) => {
-    return {
-      token_key: index("VerificationToken_token_key").on(table.token),
-      identifier_token_key: index("VerificationToken_identifier_token_key").on(
-        table.identifier,
-        table.token
-      ),
-    };
-  }
+  (vt) => ({
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  })
 );
