@@ -4,12 +4,14 @@ import { CatPic } from "drizzle/schema";
 import Image from "next/image";
 import React, { useRef } from "react";
 import Button from "./Button";
+import { useRouter } from "next/navigation";
 
 export default function Picture(
   props: typeof CatPic.$inferSelect & { catName: string }
 ) {
   const ref = useRef<HTMLDialogElement>(null);
   const deleteConfirmRef = useRef<HTMLDialogElement>(null);
+  const router = useRouter();
 
   return (
     <>
@@ -63,19 +65,22 @@ export default function Picture(
             </Button>
             <dialog
               ref={deleteConfirmRef}
-              className="bg-slate-400 text-white border-slate-500 border-solid border-2 bottom-[100%] rounded-lg"
+              className="p-5 bg-slate-400 text-black border-slate-500 border-solid border-2 bottom-[100%] rounded-lg"
             >
               <p>Are you sure?</p>
               <div className="flex gap-20 mt-5">
-                <button
-                  className="float-left"
+                <Button
+                  className="float-left bg-blue-400 hover:bg-blue-300"
                   onClick={() => deleteConfirmRef.current?.close()}
                 >
                   No
-                </button>
+                </Button>
                 <Button
-                  className="float-right text-red-600"
-                  onClick={() => deletePicture(props.id, props.url)}
+                  className="float-right bg-red-300 hover:bg-red-200"
+                  onClick={async () => {
+                    await deletePicture(props.id, props.url);
+                    router.refresh();
+                  }}
                 >
                   Yes, Delete!
                 </Button>

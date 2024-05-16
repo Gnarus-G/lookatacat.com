@@ -1,6 +1,7 @@
 "use client";
 
 import { addAsset } from "app/actions";
+import { useRouter } from "next/navigation";
 
 const ACCEPTABLE_MIME_TYPES = ["image/*", "video/mp4"];
 const WORKER_ENDPOINT = process.env.NEXT_PUBLIC_WORKER_ENDPOINT;
@@ -8,6 +9,8 @@ const WORKER_ENDPOINT_SECRET = process.env.NEXT_PUBLIC_WORKER_ENDPOINT_AUTH_KEY;
 
 export default function Upload() {
   const prefix = "Marceline";
+  const router = useRouter();
+
   return (
     <>
       <label
@@ -50,6 +53,8 @@ export default function Upload() {
             );
 
             await Promise.all(uploads);
+
+            router.refresh();
           }}
         />
       </label>
