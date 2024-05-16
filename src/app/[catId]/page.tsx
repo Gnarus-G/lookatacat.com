@@ -2,8 +2,6 @@ import { db } from "drizzle";
 import { Cat, CatPic } from "drizzle/schema";
 import { Metadata } from "next";
 import { eq } from "drizzle-orm";
-import Upload from "app/components/Upload";
-import Image from "next/image";
 import Picture from "app/components/Picture";
 
 type Props = {
@@ -38,9 +36,6 @@ export default async function CatView(props: Props) {
           <Picture key={c.id} {...c} catName={cat!.name} />
         ))}
       </section>
-      <aside className="sticky bottom-0 mt-5 w-full flex justify-center py-2">
-        <Upload />
-      </aside>
     </>
   );
 }

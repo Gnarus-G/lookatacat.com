@@ -3,6 +3,7 @@ import { deletePicture } from "app/actions";
 import { CatPic } from "drizzle/schema";
 import Image from "next/image";
 import React, { useRef } from "react";
+import Button from "./Button";
 
 export default function Picture(
   props: typeof CatPic.$inferSelect & { catName: string }
@@ -12,7 +13,7 @@ export default function Picture(
 
   return (
     <>
-      <article
+      <figure
         className="relative aspect-square"
         role="button"
         tabIndex={0}
@@ -32,16 +33,18 @@ export default function Picture(
           placeholder="blur"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
         />
-      </article>
+      </figure>
       <dialog
         ref={ref}
         className="w-full h-full lg:w-1/2 rounded-lg backdrop:bg-slate-800 backdrop:bg-opacity-90 bg-slate-600 text-white"
       >
-        <div className="relative h-full flex flex-col">
-          <h1 className="sticky">
-            uploaded {new Date(props.createdAt).toLocaleString(undefined)}
-          </h1>
-          <div className="relative w-full aspect-square my-auto">
+        <figure className="relative h-full p-5 flex flex-col">
+          <figcaption className="sticky top-0">
+            <h1 className="text-slate-300">
+              uploaded {new Date(props.createdAt).toLocaleString(undefined)}
+            </h1>
+          </figcaption>
+          <div className="relative w-full h-full my-auto">
             <Image
               className="object-contain"
               src={props.url}
@@ -51,13 +54,13 @@ export default function Picture(
               blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM0tLevBwACiAEwoxWwqwAAAABJRU5ErkJggg=="
             />
           </div>
-          <div className="sticky mt-auto bottom-0 right-0 px-5 py-2">
-            <button
-              className="float-left text-red-300"
+          <div className="sticky mt-auto bottom-0 right-0 pb-2">
+            <Button
+              className="float-left bg-red-600 hover:bg-red-700"
               onClick={() => deleteConfirmRef.current?.show()}
             >
               Delete Picture
-            </button>
+            </Button>
             <dialog
               ref={deleteConfirmRef}
               className="bg-slate-400 text-white border-slate-500 border-solid border-2 bottom-[100%] rounded-lg"
@@ -70,22 +73,22 @@ export default function Picture(
                 >
                   No
                 </button>
-                <button
+                <Button
                   className="float-right text-red-600"
                   onClick={() => deletePicture(props.id, props.url)}
                 >
                   Yes, Delete!
-                </button>
+                </Button>
               </div>
             </dialog>
-            <button
+            <Button
               className="float-right"
               onClick={() => ref.current?.close()}
             >
               Close
-            </button>
+            </Button>
           </div>
-        </div>
+        </figure>
       </dialog>
     </>
   );
