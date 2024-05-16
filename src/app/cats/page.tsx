@@ -36,7 +36,7 @@ export default async function Home() {
             </div>
             <figcaption className="text-slate-300">
               See more of{" "}
-              <Link href={`/${c.name}`} className="text-slate-200">
+              <Link href={`/${c.id}`} className="text-slate-200">
                 {c.name}
               </Link>
             </figcaption>

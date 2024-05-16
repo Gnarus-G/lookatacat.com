@@ -37,3 +37,14 @@ export async function addAsset(props: {
     catId: cat!.id,
   });
 }
+
+export async function deletePicture(id: string, url: string) {
+  await db.delete(CatPic).where(eq(CatPic.id, id));
+
+  await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "X-Custom-Auth-Key": process.env.NEXT_PUBLIC_WORKER_ENDPOINT_AUTH_KEY!,
+    },
+  });
+}

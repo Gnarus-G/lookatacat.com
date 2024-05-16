@@ -21,7 +21,7 @@ export const Cat = pgTable(
     name: text("name").notNull(),
     ownerId: varchar("ownerId", { length: 128 }).notNull(),
     favoritePicUrl: text("favoritePicUrl"),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => {
     return {
@@ -34,17 +34,23 @@ export const Cat = pgTable(
 );
 
 export const CatPic = pgTable("cat_pic", {
+  id: cuid("id").primaryKey(),
   url: text("url").notNull(),
   catId: varchar("catId", { length: 128 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const CatVideo = pgTable("cat_video", {
+  id: cuid("id").primaryKey(),
   url: text("url").notNull(),
   catId: varchar("catId", { length: 128 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const Invitee = pgTable("invitee", {
+  id: cuid("id").primaryKey(),
   email: text("email").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // Auth schemas
@@ -55,6 +61,7 @@ export const Users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const Accounts = pgTable(
@@ -73,6 +80,7 @@ export const Accounts = pgTable(
     scope: text("scope"),
     id_token: text("id_token"),
     session_state: text("session_state"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (account) => ({
     compoundKey: primaryKey({
@@ -95,6 +103,7 @@ export const VerificationTokens = pgTable(
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
