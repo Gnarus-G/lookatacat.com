@@ -1,424 +1,407 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
-  "version": "5",
-  "dialect": "mysql",
+  "id": "dbdd0790-2701-429f-81a0-cf3b35531435",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "Account": {
-      "name": "Account",
+    "public.account": {
+      "name": "account",
+      "schema": "",
       "columns": {
-        "id": {
-          "autoincrement": false,
-          "name": "id",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "userId": {
-          "autoincrement": false,
           "name": "userId",
-          "type": "varchar(191)",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
         "type": {
-          "autoincrement": false,
           "name": "type",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "provider": {
-          "autoincrement": false,
           "name": "provider",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "providerAccountId": {
-          "autoincrement": false,
-          "name": "providerAccountId",
-          "type": "varchar(191)",
+        "provider_account_id": {
+          "name": "provider_account_id",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "refresh_token": {
-          "autoincrement": false,
           "name": "refresh_token",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "access_token": {
-          "autoincrement": false,
           "name": "access_token",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "expires_at": {
-          "autoincrement": false,
           "name": "expires_at",
-          "type": "int",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
         "token_type": {
-          "autoincrement": false,
           "name": "token_type",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "scope": {
-          "autoincrement": false,
           "name": "scope",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "id_token": {
-          "autoincrement": false,
           "name": "id_token",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "session_state": {
-          "autoincrement": false,
           "name": "session_state",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "account_userId_user_id_fk": {
+          "name": "account_userId_user_id_fk",
+          "tableFrom": "account",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "Account_id": {
-          "name": "Account_id",
+        "account_provider_provider_account_id_pk": {
+          "name": "account_provider_provider_account_id_pk",
           "columns": [
-            "id"
+            "provider",
+            "provider_account_id"
           ]
         }
       },
-      "indexes": {
-        "Account_provider_providerAccountId_key": {
-          "name": "Account_provider_providerAccountId_key",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {},
       "uniqueConstraints": {}
     },
-    "Cat": {
-      "name": "Cat",
+    "public.cat": {
+      "name": "cat",
+      "schema": "",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
-          "type": "varchar(191)",
-          "primaryKey": false,
+          "type": "varchar(128)",
+          "primaryKey": true,
           "notNull": true
         },
         "name": {
-          "autoincrement": false,
           "name": "name",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "ownerId": {
-          "autoincrement": false,
-          "name": "ownerId",
-          "type": "varchar(191)",
+        "owner_id": {
+          "name": "owner_id",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
-        "favoritePicUrl": {
-          "autoincrement": false,
-          "name": "favoritePicUrl",
-          "type": "varchar(191)",
+        "favorite_pic_url": {
+          "name": "favorite_pic_url",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
-        }
-      },
-      "compositePrimaryKeys": {
-        "Cat_id": {
-          "name": "Cat_id",
-          "columns": [
-            "id"
-          ]
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
-        "Cat_name_key": {
-          "name": "Cat_name_key",
+        "cat_name_key": {
+          "name": "cat_name_key",
           "columns": [
             "name"
           ],
           "isUnique": false
         },
-        "Cat_favoritePicUrl_key": {
-          "name": "Cat_favoritePicUrl_key",
+        "cat_favorite_pic_url_key": {
+          "name": "cat_favorite_pic_url_key",
           "columns": [
-            "favoritePicUrl"
+            "favorite_pic_url"
           ],
           "isUnique": false
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "CatPic": {
-      "name": "CatPic",
-      "columns": {
-        "url": {
-          "autoincrement": false,
-          "name": "url",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "catId": {
-          "autoincrement": false,
-          "name": "catId",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "CatPic_id": {
-          "name": "CatPic_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "uniqueConstraints": {}
-    },
-    "CatVideo": {
-      "name": "CatVideo",
-      "columns": {
-        "url": {
-          "autoincrement": false,
-          "name": "url",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "catId": {
-          "autoincrement": false,
-          "name": "catId",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "CatVideo_id": {
-          "name": "CatVideo_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "uniqueConstraints": {}
-    },
-    "Invitee": {
-      "name": "Invitee",
-      "columns": {
-        "email": {
-          "autoincrement": false,
-          "name": "email",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "compositePrimaryKeys": {
-        "Invitee_id": {
-          "name": "Invitee_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "uniqueConstraints": {}
-    },
-    "Session": {
-      "name": "Session",
+    "public.cat_pic": {
+      "name": "cat_pic",
+      "schema": "",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
-          "type": "varchar(191)",
+          "type": "varchar(128)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "sessionToken": {
-          "autoincrement": false,
-          "name": "sessionToken",
-          "type": "varchar(191)",
+        "cat_id": {
+          "name": "cat_id",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
-        "userId": {
-          "autoincrement": false,
-          "name": "userId",
-          "type": "varchar(191)",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.cat_video": {
+      "name": "cat_video",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(128)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cat_id": {
+          "name": "cat_id",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.invitee": {
+      "name": "invitee",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(128)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.session": {
+      "name": "session",
+      "schema": "",
+      "columns": {
+        "session_token": {
+          "name": "session_token",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
         "expires": {
-          "autoincrement": false,
           "name": "expires",
-          "type": "datetime(3)",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         }
       },
-      "compositePrimaryKeys": {
-        "Session_id": {
-          "name": "Session_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "indexes": {
-        "Session_sessionToken_key": {
-          "name": "Session_sessionToken_key",
-          "columns": [
-            "sessionToken"
+      "indexes": {},
+      "foreignKeys": {
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
           ],
-          "isUnique": false
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
-      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "User": {
-      "name": "User",
+    "public.user": {
+      "name": "user",
+      "schema": "",
       "columns": {
         "id": {
-          "autoincrement": false,
           "name": "id",
-          "type": "varchar(191)",
-          "primaryKey": false,
+          "type": "varchar(128)",
+          "primaryKey": true,
           "notNull": true
         },
         "name": {
-          "autoincrement": false,
           "name": "name",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "email": {
-          "autoincrement": false,
           "name": "email",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "emailVerified": {
-          "autoincrement": false,
-          "name": "emailVerified",
-          "type": "datetime(3)",
+        "email_verified": {
+          "name": "email_verified",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
         "image": {
-          "autoincrement": false,
           "name": "image",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
-      "compositePrimaryKeys": {
-        "User_id": {
-          "name": "User_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "indexes": {
-        "User_email_key": {
-          "name": "User_email_key",
-          "columns": [
-            "email"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "VerificationToken": {
-      "name": "VerificationToken",
+    "public.verificationToken": {
+      "name": "verificationToken",
+      "schema": "",
       "columns": {
         "identifier": {
-          "autoincrement": false,
           "name": "identifier",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "token": {
-          "autoincrement": false,
           "name": "token",
-          "type": "varchar(191)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "expires": {
-          "autoincrement": false,
           "name": "expires",
-          "type": "datetime(3)",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
-      "compositePrimaryKeys": {},
-      "indexes": {
-        "VerificationToken_token_key": {
-          "name": "VerificationToken_token_key",
-          "columns": [
-            "token"
-          ],
-          "isUnique": false
-        },
-        "VerificationToken_identifier_token_key": {
-          "name": "VerificationToken_identifier_token_key",
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "verificationToken_identifier_token_pk": {
+          "name": "verificationToken_identifier_token_pk",
           "columns": [
             "identifier",
             "token"
-          ],
-          "isUnique": false
+          ]
         }
       },
-      "foreignKeys": {},
       "uniqueConstraints": {}
     }
   },
+  "enums": {},
+  "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
     "tables": {}
   }
 }
