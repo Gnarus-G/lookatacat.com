@@ -19,14 +19,14 @@ export const Cat = pgTable(
   {
     id: cuid("id").primaryKey(),
     name: text("name").notNull(),
-    ownerId: varchar("ownerId", { length: 128 }).notNull(),
-    favoritePicUrl: text("favoritePicUrl"),
+    ownerId: varchar("owner_id", { length: 128 }).notNull(),
+    favoritePicUrl: text("favorite_pic_url"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => {
     return {
-      name_key: index("Cat_name_key").on(table.name),
-      favoritePicUrl_key: index("Cat_favoritePicUrl_key").on(
+      name_key: index("cat_name_key").on(table.name),
+      favoritePicUrl_key: index("cat_favorite_pic_url_key").on(
         table.favoritePicUrl
       ),
     };
@@ -36,14 +36,14 @@ export const Cat = pgTable(
 export const CatPic = pgTable("cat_pic", {
   id: cuid("id").primaryKey(),
   url: text("url").notNull(),
-  catId: varchar("catId", { length: 128 }).notNull(),
+  catId: varchar("cat_id", { length: 128 }).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const CatVideo = pgTable("cat_video", {
   id: cuid("id").primaryKey(),
   url: text("url").notNull(),
-  catId: varchar("catId", { length: 128 }).notNull(),
+  catId: varchar("cat_id", { length: 128 }).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -59,7 +59,7 @@ export const Users = pgTable("user", {
   id: cuid("id").primaryKey(),
   name: text("name"),
   email: text("email").notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -72,7 +72,7 @@ export const Accounts = pgTable(
       .references(() => Users.id, { onDelete: "cascade" }),
     type: text("type").$type<string>().notNull(),
     provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
@@ -90,8 +90,8 @@ export const Accounts = pgTable(
 );
 
 export const Sessions = pgTable("session", {
-  sessionToken: text("sessionToken").primaryKey(),
-  userId: varchar("userId", { length: 128 })
+  sessionToken: text("session_token").primaryKey(),
+  userId: varchar("user_id", { length: 128 })
     .notNull()
     .references(() => Users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
