@@ -9,7 +9,7 @@ export async function insertCat(name: string) {
   const s = await auth();
   await db.insert(Cat).values({
     name,
-    ownerId: s!.user!.id,
+    ownerId: s!.user!.id!,
   });
 }
 
